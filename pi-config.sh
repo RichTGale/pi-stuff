@@ -14,12 +14,16 @@ sudo apt update
 sudo apt full-upgrade -y
 
 printf "\nInstalling some utilities and dependencies...\n"
-sudo apt install vim git zsh dkms build-essential cmake unzip libelf-dev linux-headers-$(uname -r) -y
+sudo apt install vim git zsh dkms build-essential cmake unzip openvpn libelf-dev linux-headers-$(uname -r) -y
+
+printf "\nCopying openvpn config file and enabling service\n"
+sudo cp $HOME/Programming/pi-stuff/client.conf /etc/openvpn/client/
+sudo systemctl enable openvpn-client@client.service
 
 printf "\nConfiguring vim...\n"
 cd $HOME/Programming
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-cp $HOME/Programming/pi-stuff/.vimrc $HOME/
+cp $HOME/Programming/pi5-config/.vimrc $HOME/
 vim -c PlugInstall
 
 printf "\nConfiguriing zsh...\n"
@@ -27,7 +31,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 cd $HOME/Programming
-cp $HOME/Programming/pi-stuff/.zshrc $HOME/
+cp $HOME/Programming/pi5-config/.zshrc $HOME/
 printf "\nSwitching default shell to zsh...\n"
 chsh -s $(which zsh)
 
@@ -40,6 +44,11 @@ if [ "$response" != "n" ]; then
     git clone https://github.com/aircrack-ng/rtl8812au.git
     cd rtl8812au
     sudo make dkms_install
+
+    printf "\nCopying autostart files to use wlan1 and openvpn\n" #Need to edit this and do openvpn seperately
+    cp $HOME/Programming/pi-stuff/my-autostart-apps.sh $HOME/Programming
+    chmod +x $HOME/Programming/my-autostart-apps.sh
+    sudo cp $HOME/Programming/pi-stuff/my-autostart-apps.desktop /etc/xdg/autostart/
 fi
 
 printf "\nWould you like to install pigpio (https://github.com/joan2937/pigpio)? It is a C library for programming the computer's GPIO pins. (Y/n): "
