@@ -1,10 +1,10 @@
 #!/bin/bash
 
-sudo ip link set wlan0 down
-sudo ip link set wlan1 up
-
-sudo systemctl restart wpa_supplicant.service
+nmcli device disconnect wlan0
+sleep 30
+nmcli device connect wlan1
+sleep 30
 sudo systemctl restart openvpn-client@client.service
 
-echo Press any button to end...
-read pressEnter
+#echo Press any button to end...
+#read pressEnter
