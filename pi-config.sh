@@ -46,8 +46,8 @@ if [ "$response" != "n" ]; then
     sudo make dkms_install
 
     printf "\nCopying autostart files to use wlan1 and openvpn\n" #Need to edit this and do openvpn seperately
-    cp $HOME/Programming/pi-stuff/my-autostart-apps.sh $HOME/Programming
-    chmod +x $HOME/Programming/my-autostart-apps.sh
+    cp $HOME/Programming/pi-stuff/my-autostart-apps.sh $HOME/Programs
+    chmod +x $HOME/Programs/my-autostart-apps.sh
     sudo cp $HOME/Programming/pi-stuff/my-autostart-apps.desktop /etc/xdg/autostart/
 fi
 
