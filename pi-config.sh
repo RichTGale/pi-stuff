@@ -23,7 +23,7 @@ sudo systemctl enable openvpn-client@client.service
 printf "\nConfiguring vim...\n"
 cd $HOME/Programming
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-cp $HOME/Programming/pi5-config/.vimrc $HOME/
+cp $HOME/Programming/pi-stuff/.vimrc $HOME/
 vim -c PlugInstall
 
 printf "\nConfiguriing zsh...\n"
@@ -31,7 +31,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 cd $HOME/Programming
-cp $HOME/Programming/pi5-config/.zshrc $HOME/
+cp $HOME/Programming/pi-stuff/.zshrc $HOME/
 printf "\nSwitching default shell to zsh...\n"
 chsh -s $(which zsh)
 
