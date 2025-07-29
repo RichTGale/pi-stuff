@@ -16,9 +16,25 @@ sudo apt full-upgrade -y
 printf "\nInstalling some utilities and dependencies...\n"
 sudo apt install vim git zsh dkms build-essential cmake unzip openvpn libelf-dev linux-headers-$(uname -r) -y
 
-printf "\nCopying openvpn config file and enabling service\n"
-sudo cp $HOME/Programming/pi-stuff/client.conf /etc/openvpn/client/
-sudo systemctl enable openvpn-client@client.service
+printf "\nWould you like to install pir-cam? (Y/n):"
+read response
+printf "\n"
+if ["$response" != "n"]; then
+    cd $HOME/Programming
+    gitclone https://github.com/RichtGale/pir-cam.git
+    cd pir-cam
+    sudo apt install motion
+    sudo cp $HOME/Programming/pir-cam/motion.conf /etc/motion/
+    sudo cp $HOME/Programming/pir-cam/config.txt /boot/firmware
+    cp $HOME/Programming/let-there-be-light.c $HOME/Programs
+    cd $HOME/Programs
+    gcc -Wall -pthread -o let-there-be-light let-there-be-light.c -lpigpio -lrt
+fi
+
+
+#printf "\nCopying openvpn config file and enabling service\n"
+#sudo cp $HOME/Programming/pi-stuff/client.conf /etc/openvpn/client/
+#sudo systemctl enable openvpn-client@client.service
 
 printf "\nConfiguring vim...\n"
 cd $HOME/Programming
@@ -41,9 +57,14 @@ printf "\n"
 if [ "$response" != "n" ]; then
     printf "\nInstalling TP-Link Archer T2U Plus [RTL8821AU] driver...\n"
     cd $HOME/Programs
-    git clone https://github.com/aircrack-ng/rtl8812au.git
-    cd rtl8812au
-    sudo make dkms_install
+    sudo apt install -y raspberrypi-kernel-headers build-essential git
+    git clone https://github.com/lwfinger/rtw88
+    cd rtw88
+    sudo dkms install $PWD
+    sudo make rtw8812a_fw
+#    git clone https://github.com/aircrack-ng/rtl8812au.git
+#    cd rtl8812au
+#    sudo make dkms_install
 
     printf "\nCopying autostart files to use wlan1 and openvpn\n" #Need to edit this and do openvpn seperately
     cp $HOME/Programming/pi-stuff/my-autostart-apps.sh $HOME/Programs
