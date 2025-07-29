@@ -16,26 +16,6 @@ sudo apt full-upgrade -y
 printf "\nInstalling some utilities and dependencies...\n"
 sudo apt install vim git zsh dkms build-essential cmake unzip openvpn libelf-dev linux-headers-$(uname -r) -y
 
-printf "\nWould you like to install pir-cam? (Y/n):"
-read response
-printf "\n"
-if ["$response" != "n"]; then
-    cd $HOME/Programming
-    gitclone https://github.com/RichtGale/pir-cam.git
-    cd pir-cam
-    sudo apt install motion
-    sudo cp $HOME/Programming/pir-cam/motion.conf /etc/motion/
-    sudo cp $HOME/Programming/pir-cam/config.txt /boot/firmware
-    cp $HOME/Programming/let-there-be-light.c $HOME/Programs
-    cd $HOME/Programs
-    gcc -Wall -pthread -o let-there-be-light let-there-be-light.c -lpigpio -lrt
-fi
-
-
-#printf "\nCopying openvpn config file and enabling service\n"
-#sudo cp $HOME/Programming/pi-stuff/client.conf /etc/openvpn/client/
-#sudo systemctl enable openvpn-client@client.service
-
 printf "\nConfiguring vim...\n"
 cd $HOME/Programming
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -51,31 +31,13 @@ cp $HOME/Programming/pi-stuff/.zshrc $HOME/
 printf "\nSwitching default shell to zsh...\n"
 chsh -s $(which zsh)
 
-printf "\nWould you like to install the RTL8821AU TP-Link Archer T2u Plus wifi driver? (Y/n): "
-read response
+printf "\nWould you like to install pir-cam? (Y/n):"
+read install_pircam
 printf "\n"
-if [ "$response" != "n" ]; then
-    printf "\nInstalling TP-Link Archer T2U Plus [RTL8821AU] driver...\n"
-    cd $HOME/Programs
-    sudo apt install -y raspberrypi-kernel-headers build-essential git
-    git clone https://github.com/lwfinger/rtw88
-    cd rtw88
-    sudo dkms install $PWD
-    sudo make rtw8812a_fw
-#    git clone https://github.com/aircrack-ng/rtl8812au.git
-#    cd rtl8812au
-#    sudo make dkms_install
-
-    printf "\nCopying autostart files to use wlan1 and openvpn\n" #Need to edit this and do openvpn seperately
-    cp $HOME/Programming/pi-stuff/my-autostart-apps.sh $HOME/Programs
-    chmod +x $HOME/Programs/my-autostart-apps.sh
-    sudo cp $HOME/Programming/pi-stuff/my-autostart-apps.desktop /etc/xdg/autostart/
-fi
-
-printf "\nWould you like to install pigpio (https://github.com/joan2937/pigpio)? It is a C library for programming the computer's GPIO pins. (Y/n): "
-read response
-printf "\n"
-if [ "$response" != "n" ]; then
+if ["$install_pircam" != "n"]; then
+    printf "\nInstalling motion...\n"
+    sudo apt install motion -y
+    
     printf "\nInstalling pigpio...\n"
     cd $HOME/Programs
     wget https://github.com/joan2937/pigpio/archive/master.zip
@@ -84,12 +46,65 @@ if [ "$response" != "n" ]; then
     cd pigpio-master
     make
     sudo make install
+    
+    printf "\nInstalling pir-cam...\n"
+    cd $HOME/Programming
+    gitclone https://github.com/RichtGale/pir-cam.git
+    cd pir-cam
+    sudo cp $HOME/Programming/pi-stuff/motion.conf /etc/motion/
+    sudo cp $HOME/Programming/pi-stuff/config.txt /boot/firmware
+    cp $HOME/Programming/pi-stuff/let-there-be-light.c $HOME/Programs
+    cd $HOME/Programs
+    gcc -Wall -pthread -o let-there-be-light let-there-be-light.c -lpigpio -lrt
+    
+    printf "\nInstalling TP-Link Archer T2U Plus [RTL8821AU] driver...\n"
+    sudo apt install raspberrypi-kernel-headers build-essential git -y
+    cd $HOME/Programs
+    git clone https://github.com/lwfinger/rtw88
+    cd rtw88
+    sudo dkms install $PWD
+    sudo make rtw8812a_fw
+
+    printf "\nCopying autostart files...\n" #Need to edit this and do openvpn seperately
+    cp $HOME/Programming/pi-stuff/my-autostart-apps.sh $HOME/Programs
+    chmod +x $HOME/Programs/my-autostart-apps.sh
+    sudo cp $HOME/Programming/pi-stuff/my-autostart-apps.desktop /etc/xdg/autostart/
+    cp $HOME/Programming/pi-stuff/send-files.sh $HOME/Programs/
+    chmod +x $HOME/Programs/send-files.sh
+fi
+
+if [ "$install_picam" == "n" ]; then
+	printf "\nWould you like to install the RTL8821AU TP-Link Archer T2u Plus wifi driver? (Y/n): "
+	read install_wifi
+	printf "\n"
+	if [ "$install_wifi" != "n" ]; then
+	    printf "\nInstalling TP-Link Archer T2U Plus [RTL8821AU] driver...\n"
+	    sudo apt install raspberrypi-kernel-headers build-essential git -y
+	    cd $HOME/Programs
+	    git clone https://github.com/lwfinger/rtw88
+	    cd rtw88
+	    sudo dkms install $PWD
+	    sudo make rtw8812a_fw
+    fi
+    printf "\nWould you like to install pigpio (https://github.com/joan2937/pigpio)? It is a C library for programming the computer's GPIO pins. (Y/n): "
+	read install_pigpio
+	printf "\n"
+	if [ "$install_pigpio" != "n" ]; then
+	    printf "\nInstalling pigpio...\n"
+	    cd $HOME/Programs
+	    wget https://github.com/joan2937/pigpio/archive/master.zip
+	    unzip master.zip
+	    rm -rf master.zip
+	    cd pigpio-master
+	    make
+	    sudo make install
+	fi
 fi
 
 printf "\nWould you like to change the amount of space allocated to the swapfile? (Y/n): "
-read response
+read change_swap
 printf "\n"
-if [ "$response" != "n" ]; then
+if [ "$change_swap" != "n" ]; then
     printf "\nOpening the swap config file for editing...\n"
     sleep 2
     sudo dphys-swapfile swapoff
@@ -99,9 +114,9 @@ if [ "$response" != "n" ]; then
 fi
 
 printf "\nWould you like to install SDL2? SDL2 is a C library for programming graphics and other media (Y/n): "
-read response
+read install_sdl2
 printf "\n"
-if [ "$response" != "n" ]; then
+if [ "$install_sdl2" != "n" ]; then
     printf "\nInstalling SDL2...\n"
     sudo apt install build-essential git make curl jq pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev libaudio-dev libjack-dev libsndio-dev libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev fcitx-libs-dev -y
 
@@ -131,7 +146,5 @@ fi
 printf "\nCleaning up...\n"
 sudo apt autoremove -y
 
-printf "\nThe script has finished. Press ENTER to reboot...\n"
+printf "\nThe script has finished. Press ENTER to quit...\n"
 read pressEnter
-
-sudo reboot
