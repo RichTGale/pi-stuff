@@ -48,9 +48,6 @@ if [ "$install_pircam" != "n" ]; then
     sudo make install
     
     printf "\nInstalling pir-cam...\n"
-    cd $HOME/Programming
-    gitclone https://github.com/RichtGale/pir-cam.git
-    cd pir-cam
     sudo cp $HOME/Programming/pi-stuff/motion.conf /etc/motion/
     sudo cp $HOME/Programming/pi-stuff/config.txt /boot/firmware
     cp $HOME/Programming/pi-stuff/let-there-be-light.c $HOME/Programs
