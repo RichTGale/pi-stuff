@@ -34,7 +34,7 @@ chsh -s $(which zsh)
 printf "\nWould you like to install pir-cam? (Y/n):"
 read install_pircam
 printf "\n"
-if ["$install_pircam" != "n"]; then
+if [ "$install_pircam" != "n" ]; then
     printf "\nInstalling motion...\n"
     sudo apt install motion -y
     
