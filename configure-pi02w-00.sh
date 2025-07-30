@@ -46,7 +46,7 @@ printf "\nCleaning up...\n"
 sudo apt autoremove -y
 
 printf "\nCopying autostart files...\n"
-cp $HOME/Programming/pi-stuff/configure-pi02w-01.sh $HOME/Programming/pi-stuff/configure-pi02w-02.sh $HOME/Programming/pi-stuff/configure-pi02w-03.sh $HOME/Programming/pi-stuff/configure-pi02w-04.sh HOME/Programming/pi-stuff/configure-pi02w-05.sh -t $HOME/Programs
+cp $HOME/Programming/pi-stuff/configure-pi02w-01.sh $HOME/Programming/pi-stuff/configure-pi02w-02.sh $HOME/Programming/pi-stuff/configure-pi02w-03.sh $HOME/Programming/pi-stuff/configure-pi02w-04.sh $HOME/Programming/pi-stuff/configure-pi02w-05.sh -t $HOME/Programs
 chmod +x $HOME/Programs/configure-pi02w-01.sh
 chmod +x $HOME/Programs/configure-pi02w-02.sh
 chmod +x $HOME/Programs/configure-pi02w-03.sh
