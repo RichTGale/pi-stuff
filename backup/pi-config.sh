@@ -74,7 +74,7 @@ if [ "$install_pircam" != "n" ]; then
     cd $HOME/Programs
     gcc -Wall -pthread -o let-there-be-light let-there-be-light.c -lpigpio -lrt
 
-    printf "\nCopying autostart files...\n" #Need to edit this and do openvpn seperately
+    printf "\nCopying autostart files...\n"
     cp $HOME/Programming/pi-stuff/my-autostart-apps.sh $HOME/Programs
     chmod +x $HOME/Programs/my-autostart-apps.sh
     sudo cp $HOME/Programming/pi-stuff/my-autostart-apps.desktop /etc/xdg/autostart/
