@@ -16,20 +16,30 @@ sudo apt full-upgrade -y
 printf "\nInstalling some utilities and dependencies...\n"
 sudo apt install vim git zsh dkms build-essential cmake unzip openvpn libelf-dev linux-headers-$(uname -r) -y
 
-printf "\nConfiguring vim...\n"
-cd $HOME/Programming
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-cp $HOME/Programming/pi-stuff/.vimrc $HOME/
-vim -c PlugInstall
+printf "\nWould you like to configure vim? (Y/n):"
+read install_vim
+printf "\n"
+if [ "$install_vim" != "n" ]; then
+	printf "\nConfiguring vim...\n"
+	cd $HOME/Programming
+	curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	cp $HOME/Programming/pi-stuff/.vimrc $HOME/
+	vim -c PlugInstall
+fi
 
-printf "\nConfiguriing zsh...\n"
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-cd $HOME/Programming
-cp $HOME/Programming/pi-stuff/.zshrc $HOME/
-printf "\nSwitching default shell to zsh...\n"
-chsh -s $(which zsh)
+printf "\nWould you like to configure zsh? (Y/n):"
+read install_zsh
+printf "\n"
+if [ "$install_zsh" != "n" ]; then
+	printf "\nConfiguring zsh...\n"
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+	git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+	cd $HOME/Programming
+	cp $HOME/Programming/pi-stuff/.zshrc $HOME/
+	printf "\nSwitching default shell to zsh...\n"
+	chsh -s $(which zsh)
+fi
 
 printf "\nWould you like to install pir-cam? (Y/n):"
 read install_pircam
@@ -46,21 +56,23 @@ if [ "$install_pircam" != "n" ]; then
     cd pigpio-master
     make
     sudo make install
-    
-    printf "\nInstalling pir-cam...\n"
-    sudo cp $HOME/Programming/pi-stuff/motion.conf /etc/motion/
-    sudo cp $HOME/Programming/pi-stuff/config.txt /boot/firmware
-    cp $HOME/Programming/pi-stuff/let-there-be-light.c $HOME/Programs
-    cd $HOME/Programs
-    gcc -Wall -pthread -o let-there-be-light let-there-be-light.c -lpigpio -lrt
-    
+
     printf "\nInstalling TP-Link Archer T2U Plus [RTL8821AU] driver...\n"
     sudo apt install raspberrypi-kernel-headers build-essential git -y
     cd $HOME/Programs
     git clone https://github.com/lwfinger/rtw88
     cd rtw88
     sudo dkms install $PWD
-    sudo make rtw8812a_fw
+    sudo make install_fw
+
+    printf "\nCopying config files...\n"
+    sudo cp $HOME/Programming/pi-stuff/motion.conf /etc/motion/
+    sudo cp $HOME/Programming/pi-stuff/config.txt /boot/firmware/
+
+    printf "\nBuilding IR light program...\n"
+    cp $HOME/Programming/pi-stuff/let-there-be-light.c $HOME/Programs
+    cd $HOME/Programs
+    gcc -Wall -pthread -o let-there-be-light let-there-be-light.c -lpigpio -lrt
 
     printf "\nCopying autostart files...\n" #Need to edit this and do openvpn seperately
     cp $HOME/Programming/pi-stuff/my-autostart-apps.sh $HOME/Programs
@@ -76,7 +88,8 @@ if [ "$install_picam" == "n" ]; then
 	printf "\n"
 	if [ "$install_wifi" != "n" ]; then
 	    printf "\nInstalling TP-Link Archer T2U Plus [RTL8821AU] driver...\n"
-	    sudo apt install raspberrypi-kernel-headers build-essential git -y
+	    sudo apt update; sudo apt upgrade
+        sudo apt install -y raspberrypi-kernel-headers build-essential git
 	    cd $HOME/Programs
 	    git clone https://github.com/lwfinger/rtw88
 	    cd rtw88

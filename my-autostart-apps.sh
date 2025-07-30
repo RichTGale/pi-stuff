@@ -9,7 +9,7 @@ sleep 30
 #sleep 30
 ip a
 sudo motion
-$HOME/Programs/let-there-be-light
+sudo $HOME/Programs/let-there-be-light
 
 #echo Press any button to end...
 #read pressEnter
