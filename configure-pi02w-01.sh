@@ -5,7 +5,6 @@ read change_swap
 printf "\n"
 if [ "$change_swap" != "n" ]; then
     printf "\nOpening the swap config file for editing...\n"
-    sleep 2
     sudo dphys-swapfile swapoff
     sudo vim /etc/dphys-swapfile
     sudo dphys-swapfile setup
