@@ -54,4 +54,6 @@ chmod +x $HOME/Programs/configure-pi02w-04.sh
 chmod +x $HOME/Programs/configure-pi02w-05.sh
 sudo cp $HOME/Programming/pi-stuff/configure-pi02w-01.desktop /etc/xdg/autostart/
 
+sudo raspi-config
+
 sudo reboot

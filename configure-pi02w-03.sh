@@ -25,7 +25,7 @@ if [ "$install_wifi" != "n" ]; then
     git clone https://github.com/lwfinger/rtw88
     cd rtw88
     sudo dkms install $PWD
-    sudo make rtw8812a_fw
+    sudo make install_fw
 fi
 
 sudo rm /etc/xdg/autostart/configure-pi02w-03.desktop 
