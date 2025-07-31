@@ -46,12 +46,13 @@ printf "\nCleaning up...\n"
 sudo apt autoremove -y
 
 printf "\nCopying autostart files...\n"
-cp $HOME/Programming/pi-stuff/configure-pi02w-01.sh $HOME/Programming/pi-stuff/configure-pi02w-02.sh $HOME/Programming/pi-stuff/configure-pi02w-03.sh $HOME/Programming/pi-stuff/configure-pi02w-04.sh $HOME/Programming/pi-stuff/configure-pi02w-05.sh -t $HOME/Programs
+cp $HOME/Programming/pi-stuff/configure-pi02w-01.sh $HOME/Programming/pi-stuff/configure-pi02w-02.sh $HOME/Programming/pi-stuff/configure-pi02w-03.sh $HOME/Programming/pi-stuff/configure-pi02w-04.sh $HOME/Programming/pi-stuff/configure-pi02w-05.sh $HOME/Programming/pi-stuff/my-autostart-apps.sh -t $HOME/Programs
 chmod +x $HOME/Programs/configure-pi02w-01.sh
 chmod +x $HOME/Programs/configure-pi02w-02.sh
 chmod +x $HOME/Programs/configure-pi02w-03.sh
 chmod +x $HOME/Programs/configure-pi02w-04.sh
 chmod +x $HOME/Programs/configure-pi02w-05.sh
+chmod +x $HOME/Programs/my-autostart-apps.sh
 sudo cp $HOME/Programming/pi-stuff/configure-pi02w-01.desktop /etc/xdg/autostart/
 
 sudo raspi-config
