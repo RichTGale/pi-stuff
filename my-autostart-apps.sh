@@ -4,12 +4,13 @@ nmcli device disconnect wlan0
 sleep 30
 nmcli device connect wlan1
 sleep 30
-#printf "Restarting VPN service. Network config will display once the VPN has restarted.\n"
-#sudo systemctl restart openvpn-client@client.service
-#sleep 30
+printf "Restarting VPN service. Network config will display once the VPN has restarted.\n"
+sudo systemctl restart openvpn-client@client.service
+sleep 30
 ip a
+lxterminal --geometry=300x300 -e "$HOME/Programs/send-files.sh"
 sudo motion
-sudo $HOME/Programs/let-there-be-light
+lxterminal --geometry=300x300 -e "sudo $HOME/Programs/let-there-be-light"
 
-#echo Press any button to end...
-#read pressEnter
+echo Press any button to end...
+read pressEnter
