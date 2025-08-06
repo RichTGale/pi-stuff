@@ -1,7 +1,8 @@
 #!/bin/bash
 
 host="/home/richard/Videos"
-remote="10.8.0.3:/home/richard/Videos"
+remote1="10.8.0.3:/home/richard/Videos"
+remote2="10.8.0.1:/root/Videos"
 
 # Loop indefinitely
 while [ 1 ]
@@ -12,7 +13,8 @@ do
         videos=($host/*)   # Get the array of detections
         v=0
         for v in "${!videos[@]}"; do
-            scp ${videos[v]} $remote
+            scp ${videos[v]} $remote2
+            scp ${videos[v]} $remote1
             sleep 70
         done
         sudo rm -f $host/*
