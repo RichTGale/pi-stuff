@@ -2,7 +2,7 @@
 
 host="/home/richard/Videos"
 remote1="10.8.0.3:/home/richard/Videos"
-remote2="10.8.0.1:/root/Videos"
+remote2="root@10.8.0.1:/root/Videos"
 
 # Loop indefinitely
 while [ 1 ]
