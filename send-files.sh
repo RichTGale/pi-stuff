@@ -10,14 +10,14 @@ do
     if [ ! -z "$(ls -A $host )" ]; # Check that there are videos
     then
         printf "A video was recorded...\n"
-        sleep 70
+        sleep 60
         videos=($host/*)   # Get the array of detections
         v=0
         for v in "${!videos[@]}"; do
             printf "Sending video to client(s)...\n"
             scp ${videos[v]} $remote2
             scp ${videos[v]} $remote1
-            sleep 70
+            sleep 60
         done
         printf "Deleting local video(s)...\n"
         sudo rm -f $host/*
