@@ -7,7 +7,7 @@ remote2="root@10.8.0.1:/root/Videos"
 # Loop indefinitely
 while [ 1 ]
 do
-    sleep 1
+    sleep 30
     if [ ! -z "$(ls -A $host )" ]; # Check that there are videos
     then
         printf "A video was recorded...\n"
