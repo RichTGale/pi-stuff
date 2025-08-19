@@ -8,6 +8,7 @@ fi
 
 if [ ! -d $HOME/Programs ]; then
     mkdir $HOME/Programs
+	mkdir $HOME/Programs/videos
 fi
 
 printf "\nDoing a full system update and upgrade...\n"
