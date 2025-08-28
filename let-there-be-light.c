@@ -20,8 +20,6 @@ int main(int argc, char* argv[])
 
     gpioWrite(on_pin, 1);
 
-    while (1);
-
     gpioTerminate();
 
     exit(EXIT_SUCCESS);
