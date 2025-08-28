@@ -1,8 +1,8 @@
 #!/bin/bash
 
 host="/home/richard/Videos"
-remote1="10.8.0.4:/home/richard/Videos"
-remote2="root@10.8.0.1:/root/Videos"
+remote1="richard@10.8.0.4:/home/richard/Videos"
+remote2="richard@10.8.0.1:/home/richard/Videos"
 
 # Loop indefinitely
 while [ 1 ]
