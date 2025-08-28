@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <pigpio.h>
 
 int main(int argc, char* argv[])
@@ -18,7 +19,10 @@ int main(int argc, char* argv[])
 
     gpioSetMode(on_pin, PI_OUTPUT);
 
-    gpioWrite(on_pin, 1);
+    if (!strcmp(argv[1], "on"))
+        gpioWrite(on_pin, 1);
+    else
+        gpioWrite(on_pin, 0);
 
     gpioTerminate();
 
