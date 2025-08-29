@@ -2,7 +2,6 @@
 
 while [ 1 ]
 do
-
     sleep 60
     ping -c 2 -w 5 10.8.0.1
     if [ $? != "0" ];
@@ -16,9 +15,7 @@ do
         then
             printf "Failed to reconnect... retrying in 60 seconds...\n"
         fi
-    then
     else
         printf "Connected...\n"
     fi
-
 done
