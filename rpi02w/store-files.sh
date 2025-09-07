@@ -27,6 +27,6 @@ do
         printf "Deleting ${src}...\n"
         sudo rm -f ${src}/*.mp4
     fi
-    sleep 60
+    sleep 3600
 done
 
