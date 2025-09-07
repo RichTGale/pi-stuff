@@ -3,10 +3,6 @@
 src="/home/richard/Videos"
 dest="/media/richard/EVO_500GB/coopcam"
 
-#sudo umount /media/richard/EVO_500GB
-#sudo umount /media/richard/EVO_500GB1
-#sudo mount --source UUID=6EFF-BE49 /home/richard/EVO_500GB
-
 printf "dest = ${dest}\n"
 
 while [ 1 ]
@@ -15,8 +11,7 @@ do
     
     success="false"
 
-    ls ${src}
-    if [ "${?}" == "0" ];
+    if [ ! -z "$(ls -A ${src} )" ]; # Check that there are videos
     then
 
         sudo ls ${dest}
@@ -35,3 +30,4 @@ do
     fi
     sleep 60
 done
+
