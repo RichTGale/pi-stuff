@@ -17,6 +17,8 @@ do
             printf "Storing in ${dest}...\n"
             sudo rsync --progress ${src}/*.mp4 ${dest}
             success="true"
+        else
+            printf "Storage not available :(\n"
         fi
     fi
 
