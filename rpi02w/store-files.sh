@@ -3,8 +3,6 @@
 src="/home/richard/Videos"
 dest="/media/richard/EVO_500GB/coopcam"
 
-printf "dest = ${dest}\n"
-
 while [ 1 ]
 do
     printf "\nStoring any incoming videos...\n"
