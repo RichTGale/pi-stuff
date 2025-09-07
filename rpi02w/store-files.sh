@@ -14,12 +14,13 @@ do
     if [ ! -z "$(ls -A ${src} )" ]; # Check that there are videos
     then
 
-        sudo ls ${dest}
-        if [ $? == 0 ];
+        if [ ! -d ${dest} ];
         then
+            mkdir ${dest}
+        else
             printf "Storing in ${dest}...\n"
-            success="true"
             sudo rsync --progress ${src}/*.mp4 ${dest}
+            success="true"
         fi
     fi
 
