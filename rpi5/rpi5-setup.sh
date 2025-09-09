@@ -16,7 +16,7 @@ sudo apt update
 sudo apt full-upgrade -y
 
 printf "\nInstalling some utilities and dependencies...\n"
-sudo apt install vim git zsh dkms build-essential cmake make curl unzip libelf-dev linux-headers-$(uname -r) -y
+sudo apt install vim git zsh dkms build-essential cmake make curl unzip macchanger aircrack-ng libelf-dev linux-headers-$(uname -r) -y
 
 printf "\nWould you like to configure vim? (Y/n):"
 read install_vim
