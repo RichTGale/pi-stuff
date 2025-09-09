@@ -14,12 +14,13 @@ do
         vids=(${src}/*)   # Get the array of videos
         vid=0
         for vid in "${!vids[@]}"; do
-
             if [ -d ${tar} ];
             then
+                vlc --play-and-exit ${vids[vid]}
                 printf "Sending video to ${tar}...\n"
                 rsync --progress ${vids[vid]} ${tar}
                 sudo rm -f rm ${vids[vid]}
+                sleep 1
             else
                 printf "${tar} isn't accessible :(\n"
             fi
