@@ -13,7 +13,7 @@ do
         printf "Videos were received...\n"
         vids=(${src}/*)   # Get the array of videos
         vid=0
-        for v in "${!vids[@]}"; do
+        for vid in "${!vids[@]}"; do
 
             if [ -d ${tar} ];
             then
