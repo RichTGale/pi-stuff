@@ -13,13 +13,9 @@ void print_help()
                     "OPTIONS:\n"
                     "   -h  Print this help menu.\n"
                     "   -t  Length of time (in hours) to run the program (default 1).\n"
-                    "   -l  Local temp directory.\n"
-                    "   -r  Directory of this repo on the camera device.\n"
-                    "   -u  The current user's username.\n"
                     "\n"
                     "EXAMPLE:\n"
-                    "   sudo ./sensor -t 5 -u richard -l \"$HOME/Programming/pir-cam/sensor/temp\" "
-                    "-r \"192.168.0.4:/home/<username>/Programming/pir-cam\"\n");
+                    "   sudo ./sensor -t 5\n");
 }
 
 int main(int argc, char** argv)
@@ -54,49 +50,49 @@ int main(int argc, char** argv)
     framecount = 0;
     invalid_args = argc;
 
-    /* Checking if there are the right number of arguments. */
-    if (argc < 2 || argc > 9)
-    {
-        fprintf(stdout, "Error: Invalid number of arguments\n");
-        print_help();
-        exit(EXIT_FAILURE);
-    }
-
-    for (int i = 1; i < argc; i+=2)
-    {
-        if (!strcmp(argv[i], "-h"))
-        {
-            print_help();
-            exit(EXIT_FAILURE);
-        }
-        else if (!strcmp(argv[i], "-t"))
-        {
-            run_hours = atoi(argv[i+1]);
-            invalid_args -= 2;
-        }
-        else if (!strcmp(argv[i], "-l"))
-        {
-            loc_dir = argv[i + 1];
-            invalid_args -= 2;
-        }
-        else if (!strcmp(argv[i], "-r"))
-        {
-            rem_dir = argv[i + 1];
-            invalid_args -= 2;
-        }
-        else if (!strcmp(argv[i], "-u"))
-        {
-            username = argv[i + 1];
-            invalid_args -= 2;
-        }
-    }
-
-    if (invalid_args > 1)
-	{
-        fprintf(stdout, "Please use the correct flags (e.g \"-x\") preceeding the corresponding argument value.\n");
-        print_help();
-        exit(EXIT_FAILURE);
-    }
+//    /* Checking if there are the right number of arguments. */
+//    if (argc < 2 || argc > 2)
+//    {
+//        fprintf(stdout, "Error: Invalid number of arguments\n");
+//        print_help();
+//        exit(EXIT_FAILURE);
+//    }
+//
+//    for (int i = 1; i < argc; i+=2)
+//    {
+//        if (!strcmp(argv[i], "-h"))
+//        {
+//            print_help();
+//            exit(EXIT_FAILURE);
+//        }
+//        else if (!strcmp(argv[i], "-t"))
+//        {
+//            run_hours = atoi(argv[i+1]);
+//            invalid_args -= 2;
+//        }
+//        else if (!strcmp(argv[i], "-l"))
+//        {
+//            loc_dir = argv[i + 1];
+//            invalid_args -= 2;
+//        }
+//        else if (!strcmp(argv[i], "-r"))
+//        {
+//            rem_dir = argv[i + 1];
+//            invalid_args -= 2;
+//        }
+//        else if (!strcmp(argv[i], "-u"))
+//        {
+//            username = argv[i + 1];
+//            invalid_args -= 2;
+//        }
+//    }
+//
+//    if (invalid_args > 1)
+//	{
+//        fprintf(stdout, "Please use the correct flags (e.g \"-x\") preceeding the corresponding argument value.\n");
+//        print_help();
+//        exit(EXIT_FAILURE);
+//    }
 
     /* Printing welcome message. */
     tstamp = timestamp();
