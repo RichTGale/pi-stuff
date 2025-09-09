@@ -18,7 +18,7 @@ sleep 5
 lxterminal -e "sudo ${HOME}/Programs/store-files.sh"
 sleep 5
 #lxterminal -e "sudo ${HOME}/Programs/macdump.sh"
-sleep 2
+#sleep 2
 
 ip a
 sleep 2
