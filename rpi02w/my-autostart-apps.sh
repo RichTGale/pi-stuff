@@ -1,7 +1,7 @@
 #!/bin/bash
 
-nmcli device disconnect wlan0
-sleep 5
+#nmcli device disconnect wlan0
+#sleep 5
 nmcli device connect wlan1
 sleep 5
 
@@ -11,10 +11,10 @@ sleep 5
 
 lxterminal -e "sudo ${HOME}/Programs/reconnect.sh"
 sleep 5
-lxterminal -e "sudo ${HOME}/Programs/store-files.sh"
-sleep 5
+#lxterminal -e "sudo ${HOME}/Programs/store-files.sh"
+#sleep 5
 #lxterminal -e "sudo ${HOME}/Programs/macdump.sh"
-sleep 2
+#sleep 2
 
 ip a
 sleep 2
