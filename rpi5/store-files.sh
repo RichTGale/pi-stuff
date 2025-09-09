@@ -11,7 +11,6 @@ do
     if [ ! -z "$(ls -A ${src})" ]; # Check that there are videos
     then
         printf "Videos were received...\n"
-        sleep 15
         vids=(${src}/*)   # Get the array of videos
         vid=0
         for v in "${!vids[@]}"; do
@@ -19,7 +18,8 @@ do
             if [ -d ${tar} ];
             then
                 printf "Sending video to ${tar}...\n"
-                mv ${vids[vid]} ${tar}
+                rsync --progress ${vids[vid]} ${tar}
+                sudo rm -f rm ${vids[vid]}
             else
                 printf "${tar} isn't accessible :(\n"
             fi
