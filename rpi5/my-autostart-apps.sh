@@ -9,6 +9,10 @@ printf "Restarting VPN service. Network config will display once the VPN has res
 sudo systemctl restart openvpn-client@client.service
 sleep 5
 
+sudo apt update
+sudo apt upgrade -y
+sudo apt autoremove -y
+
 lxterminal -e "sudo ${HOME}/Programs/reconnect.sh"
 sleep 5
 lxterminal -e "sudo ${HOME}/Programs/store-files.sh"
