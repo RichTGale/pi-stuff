@@ -1,8 +1,5 @@
 #1/bin/bash
 
-device_path="|${device_path}|"
-device_path=s|${device_path}|
-s device_path=|${device_path}|
 #repo_name=${PWD##*/}
 #repo_name=${repo_name:-/}
 device_path=${PWD}
@@ -62,7 +59,7 @@ if [ "${install_zsh}" != "n" ]; then
 	git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 	cp -t ${HOME} ${device_path}/.zshrc
 	printf "\nSwitching default shell to zsh...\n"
-	sudo chsh -s $(which zsh)
+	chsh -s $(which zsh)
 fi
 
 printf "\nCleaning up...\n"
@@ -110,7 +107,7 @@ cp ${device_path}/send-files.sh ${HOME}/Programs/
 chmod +x $HOME/Programs/send-files.sh
 
 printf "\nCopying autostart files...\n"
-sudo cp -t /etc/xdg/autostart ${device_path}/autoapps.sh
+sudo cp -t /etc/xdg/autostart ${device_path}/autoapps.desktop
 cp -t ${HOME}/Programs ${device_path}/autoapps.sh
 chmod +x ${HOME}/Programs/*.sh
 
