@@ -1,5 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Automatically run a startup script
-Exec=lxterminal --geometry=800x500 -e "$HOME/Programs/configure-pi02w-02.sh"
-Terminal=true

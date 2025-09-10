@@ -32,7 +32,5 @@ do
             mv ${videos[v]} /home/richard/Programs/videos
             sleep 15
         done
-#        printf "Deleting local video(s)...\n"
-#        sudo rm -f $host/*
     fi
 done

@@ -2,9 +2,7 @@
 
 repo_name="pi-stuff/rpi02w"
 
-printf "\nWould you like to change the amount of space allocated to the swapfile? (Y/n): "
-read change_swap
-printf "\n"
+
 if [ "${change_swap}" != "n" ]; then
     printf "\nOpening the swap config file for editing...\n"
     sudo dphys-swapfile swapoff

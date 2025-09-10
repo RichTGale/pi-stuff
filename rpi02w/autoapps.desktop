@@ -1,5 +1,5 @@
 [Desktop Entry]
 Type=Application
 Name=Automatically run a startup script
-Exec=lxterminal -e "$HOME/Programs/configure-pi02w-02.sh"
+Exec=lxterminal -e "$HOME/Programs/autoapps.sh"
 Terminal=true
