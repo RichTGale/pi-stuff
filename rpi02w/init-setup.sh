@@ -2,25 +2,25 @@
 
 #repo_name=${PWD##*/}
 #repo_name=${repo_name:-/}
-device_path=${PWD}/rpi02w
+device_path=${PWD}
 
 
 printf "\nWelcome to your rpi setup wizard! "
 sleep 2
-printf "During installation the rpi will restart se eral times.\n"
-sleep 2
-printf "\nPlease answer the fiollowing questions:\n"
+printf "During installation the rpi will restart a few times.\n"
+sleep 5
+printf "Please answer the fiollowing questions:\n"
 sleep 2
 
 printf "\nWould you like to install vim? <Y/n>: "
 read install_vim
 printf "\n"
 
-printf "\nWould you like to install zsh? <Y/n>: "
+printf "Would you like to install zsh? <Y/n>: "
 read install_zsh
 printf "\n"
 
-printf "\nWould you like to modify the amount of swapfile space? <Y/n>: "
+printf "Would you like to modify the amount of swapfile space? <Y/n>: "
 read modify_swap
 printf "\n"
 
@@ -75,8 +75,8 @@ then
 fi
 
 # Giving the other files the device_path
-sed -i "${device_path}" ${device_path}/install-zerosec.sh
-sed -i "${device_path}" ${device_path}/finalise-setup.sh
+sed -i "3i ${device_path}" ${device_path}/install-zerosec.sh
+sed -i "3i ${device_path}" ${device_path}/finalise-setup.sh
 
 printf "\nCopying autostart files...\n"
 sudo cp -t /etc/xdg/autostart ${device_path}/install-zerosec.desktop
