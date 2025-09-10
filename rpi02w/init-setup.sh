@@ -45,7 +45,7 @@ sudo apt install git dkms build-essential cmake unzip openvpn libelf-dev linux-h
 
 if [ "${install_vim}" != "n" ]; then
 	printf "\nInstalling vim...\n"
-    sudo apt install vim
+    sudo apt install vim -y
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 	cp -t ${HOME} ${device_path}/.vimrc
 	vim -c PlugInstall
@@ -53,7 +53,7 @@ fi
 
 if [ "${install_zsh}" != "n" ]; then
 	printf "\nInstalling zsh...\n"
-    sudo apt install zsh
+    sudo apt install zsh -y
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 	git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
