@@ -1,5 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Automatically run a startup script
-Exec=lxterminal -e "$HOME/Programs/change-swap.sh"
-Terminal=true

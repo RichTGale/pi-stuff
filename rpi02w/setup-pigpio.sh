@@ -1,0 +1,9 @@
+#!/bin/bash
+
+printf "\nInstalling pigpio...\n"
+wget https://github.com/joan2937/pigpio/archive/master.zip
+unzip master.zip
+rm -rf master.zip
+cd pigpio-master
+make
+sudo make install
