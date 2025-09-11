@@ -5,7 +5,8 @@
 #include <string.h>
 #include <pigpio.h>
 
-#include "mycutils.h"
+#include "utils.h"
+
 
 void print_help()
 {
@@ -18,52 +19,25 @@ void print_help()
                     "   sudo ./sensor -t 5\n");
 }
 
-int main(int argc, char** argv)
+bool valid_args(int argc, char** argv)
 {
-    struct timespec frm_timer;          /* Timer for framerate. */
-    struct timespec rec_timer;          /* Timer for camera recording. */
-    struct timespec end_timer;          /* Timer for ending the program. */
-    bool is_running;                    /* Whether the program is running. */
-    bool is_recording;                  /* Whether the program is recording. */
-    char* tstamp;                       /* A timestamp. (Need to free()). */
-    char* str_buff;                     /* Buffer to make strings. */
-    char* username;                     /* The username on the local machine. */
-    int err_code;                       /* An error code. */
-    int invalid_args;                   /* The number of invalid arguments passed to this program. */
-    int gpio_val;                       /* The valjue read from the PIR sensor. */
-    unsigned int run_hours;             /* The number of hours to run the program. */
-    char* loc_dir;                      /* Locla temp directory. */
-    char* rem_dir;                      /* Directory of this repo o the camera device. */
-    long long unsigned int framecount;  /* Counts how many frames have happened. */
-    long long unsigned int nanos_per_frame;  /* The number of nanoseconds per frame. */
-    const int FRAMES_PER_SEC = 2;       /* The number of frames per second. */
-    const long long unsigned int _NANOS_PER_SEC = NANOS_PER_SEC; /* The number of nanoseconds per second. Defined in "mycutils.h". */
-    const int PIR_PIN = 27;             /* Pin number of the PIR sensor. */
-    const int IR_PIN = 4;
-//    const int IR2_PIN = 23;
-    const int RECORDING_SECONDS = 10;   /* Seconds to wait after a detection. */
+    bool args_valid = true;
+    int arg = 1; // The first arg is the number of args
 
-    /* Initialising some variables. */
-    nanos_per_frame = _NANOS_PER_SEC / FRAMES_PER_SEC;
-    is_running = true;
-    is_recording = false;
-    framecount = 0;
-    invalid_args = argc;
-
-//    /* Checking if there are the right number of arguments. */
-//    if (argc < 2 || argc > 2)
-//    {
-//        fprintf(stdout, "Error: Invalid number of arguments\n");
-//        print_help();
-//        exit(EXIT_FAILURE);
-//    }
-//
-    for (int i = 1; i < argc; i+=2)
+    /* Checking if there are the right number of arguments. */
+/*    if (argc < 2 || argc > 2)
     {
-        if (!strcmp(argv[i], "-h"))
+        fprintf(stdout, "Error: Invalid number of arguments\n");
+        print_help();
+        exit(EXIT_FAILURE);
+    }
+*/
+
+    for (arg = 1; arg < argc; arg+=1)
+    {
+        if (!strcmp(argv[arg], "-h"))
         {
-            print_help();
-            exit(EXIT_FAILURE);
+            args_valid = false;
         }
         else if (!strcmp(argv[i], "-t"))
         {
@@ -86,6 +60,100 @@ int main(int argc, char** argv)
 //            invalid_args -= 2;
 //        }
     }
+
+}
+
+/**
+ * Returns 0 on success.
+ */
+int init_pir(int pin, FILE* log)
+{
+    int error;
+    char* sp;
+
+    /* Creating gpio input to read the PIR sensor. */
+    if ((error = gpioSetMode(pin, PI_INPUT)) != 0)
+    {
+        if (error == PI_BAD_GPIO)
+        {
+	        print(   log, strfmt(sp, "Error in init_pir() setting pinmode for pin %d: PI_BAD_GPIO\n"));
+            print(stdout, strfmt(sp, "Error in init_pir() setting pinmode for pin %d: PI_BAD_GPIO\n"));
+        }
+        else
+        {
+            print(   log, strfmt(sp, "Error in init_pir() setting pinmode for pin %d: PI_BAD_MODE\n"));
+            print(stdout, strfmt(sp, "Error in init_pir() setting pinmode for pin %d: PI_BAD_MODE\n"));
+        }
+    }
+
+    return error;
+}
+
+/**
+ * Returns 0 on success.
+ */
+int init_ir(int pin, FILE* log)
+{
+    int error;
+    char* sp;
+
+    if ((error = gpioSetMode(pin, PI_OUTPUT)) != 0)
+    {
+        if (error == PI_BAD_GPIO)
+        {
+	        print(   log, strfmt(sp, "Error in init_ir() setting pinmode for pin %d: PI_BAD_GPIO\n", pin));
+            print(stdout, strfmt(sp, "Error in init_ir() setting pinmode for pin %d: PI_BAD_GPIO\n", pin));
+        }
+        else
+        {
+            print(   log, strfmt(sp, "Error in init_ir() setting pinmode for pin %d: PI_BAD_MODE\n", pin));
+            print(stdout, strfmt(sp, "Error in init_ir() setting pinmode for pin %d: PI_BAD_MODE\n", pin));
+        }
+    }
+
+    return error;
+}
+
+int main(int argc, char** argv)
+{
+	struct {
+	    
+        const int FRAMES_PER_SEC;       /* The number of frames per second. */
+	    const long long unsigned int _NANOS_PER_SEC; /* The number of nanoseconds per second. Defined in "mycutils.h". */
+	    const int RECORDING_SECONDS;   /* Seconds to wait after a detection. */
+
+		const int PIR_PIN;             /* Pin number of the PIR sensor. */
+	    const int IR1_PIN;
+        const int IR2_PIN;
+
+        FILE* log;
+        char* log_buff;
+
+        struct timespec frm_timer;          /* Timer for framerate. */
+	    struct timespec rec_timer;          /* Timer for camera recording. */
+	    struct timespec end_timer;          /* Timer for ending the program. */
+	    
+        bool is_running;                    /* Whether the program is running. */
+	    bool is_recording;                  /* Whether the program is recording. */
+	    
+        char* tstamp;                       /* A timestamp. (Need to free()). */
+	    char* buff;                     /* Buffer to make strings. */
+	    
+        int err_code;                       /* An error code. */
+	    int invalid_args;                   /* The number of invalid arguments passed to this program. */
+	    
+        int gpio_val;                       /* The valjue read from the PIR sensor. */
+	    
+        unsigned int run_time;             /* The number of hours to run the program. */
+	    
+        long long unsigned int framecount;  /* Counts how many frames have happened. */
+	    long long unsigned int nanos_per_frame;  /* The number of nanoseconds per frame. */
+	
+	} myobj = { 2, NANOS_PER_SEC, 10, 27, 4, 23 };
+
+
+    char* tstamp;
+
 //
 //    if (invalid_args > 1)
 //	{
@@ -95,11 +163,10 @@ int main(int argc, char** argv)
 //    }
 
     /* Printing welcome message. */
-    tstamp = timestamp();
-    strfmt(&str_buff, "Program started at %s. Will run for %d hours\n", tstamp, run_hours);
-    fprintf(stdout, "%s", str_buff);
-    free(tstamp);
-    free(str_buff);
+    print(myobj.log, strfmt(myobj.log_buff, "Program start time: %d\n", tstamp = timestamp()));
+    print(myobj.log, strfmt(myobj.log_buff, "Projected run time: %d\n", myobj.run_time));
+    print(stdout, strfmt(myobj.log_buff, "Program start time: %d\n", tstamp = timestamp()));
+    print(stdout, strfmt(myobj.log_buff, "Projected run time: %d\n", myobj.run_time));
     
     /* Initialising pigpio. */
     if (gpioInitialise() < 0)
@@ -108,32 +175,11 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
+    init_pir(myobj.PIR_PIN, myobj.log);
+    init_ir(myobj.IR1_PIN, myobj.log);
+    init_ir(myobj.IR2_PIN, myobj.log);
+
     /* Creating gpio input to read the PIR sensor. */
-    if ((err_code = gpioSetMode(PIR_PIN, PI_INPUT)) != 0)
-    {
-        if (err_code == PI_BAD_GPIO)
-        {
-            fprintf(stdout, "Error setting pinmode: PI_BAD_GPIO\n");
-        }
-        else
-        {
-            fprintf(stdout, "Error setting pinmode: PI_BAD_MODE\n");
-        }
-        exit(EXIT_FAILURE);
-    }
-    /* Creating gpio input to read the PIR sensor. */
-    if ((err_code = gpioSetMode(IR_PIN, PI_OUTPUT)) != 0)
-    {
-        if (err_code == PI_BAD_GPIO)
-        {
-            fprintf(stdout, "Error setting pinmode: PI_BAD_GPIO\n");
-        }
-        else
-        {
-            fprintf(stdout, "Error setting pinmode: PI_BAD_MODE\n");
-        }
-        exit(EXIT_FAILURE);
-    }
     /* Creating gpio input to read the PIR sensor. */
 //    if ((err_code = gpioSetMode(IR2_PIN, PI_OUTPUT)) != 0)
 //    {
