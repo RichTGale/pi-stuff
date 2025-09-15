@@ -13,15 +13,19 @@ void print_help()
                     "OPTIONS:\n"
                     "   -h  Print this help menu.\n"
                     "   -t  Length of time (in hours) to run the program (default 1).\n"
+                    "   -l  Local temp directory.\n"
+                    "   -r  Directory of this repo on the camera device.\n"
+                    "   -u  The current user's username.\n"
                     "\n"
                     "EXAMPLE:\n"
-                    "   sudo ./sensor -t 5\n");
+                    "   sudo ./sensor -t 5 -u richard -l \"$HOME/Programming/pir-cam/sensor/temp\" "
+                    "-r \"192.168.0.4:/home/<username>/Programming/pir-cam\"\n");
 }
 
 int main(int argc, char** argv)
 {
     struct timespec frm_timer;          /* Timer for framerate. */
-    struct timespec rec_timer;          /* Timer for camera recording. */
+//    struct timespec rec_timer;          /* Timer for camera recording. */
     struct timespec end_timer;          /* Timer for ending the program. */
     bool is_running;                    /* Whether the program is running. */
     bool is_recording;                  /* Whether the program is recording. */
@@ -41,7 +45,7 @@ int main(int argc, char** argv)
     const int PIR_PIN = 27;             /* Pin number of the PIR sensor. */
     const int IR_PIN = 4;
     const int IR2_PIN = 23;
-    const int RECORDING_SECONDS = 10;   /* Seconds to wait after a detection. */
+    const int RECORDING_SECONDS = 30;   /* Seconds to wait after a detection. */
 
     /* Initialising some variables. */
     nanos_per_frame = _NANOS_PER_SEC / FRAMES_PER_SEC;
@@ -50,49 +54,49 @@ int main(int argc, char** argv)
     framecount = 0;
     invalid_args = argc;
 
-//    /* Checking if there are the right number of arguments. */
-//    if (argc < 2 || argc > 2)
-//    {
-//        fprintf(stdout, "Error: Invalid number of arguments\n");
-//        print_help();
-//        exit(EXIT_FAILURE);
-//    }
-//
-//    for (int i = 1; i < argc; i+=2)
-//    {
-//        if (!strcmp(argv[i], "-h"))
-//        {
-//            print_help();
-//            exit(EXIT_FAILURE);
-//        }
-//        else if (!strcmp(argv[i], "-t"))
-//        {
-//            run_hours = atoi(argv[i+1]);
-//            invalid_args -= 2;
-//        }
-//        else if (!strcmp(argv[i], "-l"))
-//        {
-//            loc_dir = argv[i + 1];
-//            invalid_args -= 2;
-//        }
-//        else if (!strcmp(argv[i], "-r"))
-//        {
-//            rem_dir = argv[i + 1];
-//            invalid_args -= 2;
-//        }
-//        else if (!strcmp(argv[i], "-u"))
-//        {
-//            username = argv[i + 1];
-//            invalid_args -= 2;
-//        }
-//    }
-//
-//    if (invalid_args > 1)
-//	{
-//        fprintf(stdout, "Please use the correct flags (e.g \"-x\") preceeding the corresponding argument value.\n");
-//        print_help();
-//        exit(EXIT_FAILURE);
-//    }
+    /* Checking if there are the right number of arguments. */
+    if (argc < 2 || argc > 9)
+    {
+        fprintf(stdout, "Error: Invalid number of arguments\n");
+        print_help();
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 1; i < argc; i+=2)
+    {
+        if (!strcmp(argv[i], "-h"))
+        {
+            print_help();
+            exit(EXIT_FAILURE);
+        }
+        else if (!strcmp(argv[i], "-t"))
+        {
+            run_hours = atoi(argv[i+1]);
+            invalid_args -= 2;
+        }
+        else if (!strcmp(argv[i], "-l"))
+        {
+            loc_dir = argv[i + 1];
+            invalid_args -= 2;
+        }
+        else if (!strcmp(argv[i], "-r"))
+        {
+            rem_dir = argv[i + 1];
+            invalid_args -= 2;
+        }
+        else if (!strcmp(argv[i], "-u"))
+        {
+            username = argv[i + 1];
+            invalid_args -= 2;
+        }
+    }
+
+    if (invalid_args > 1)
+	{
+        fprintf(stdout, "Please use the correct flags (e.g \"-x\") preceeding the corresponding argument value.\n");
+        print_help();
+        exit(EXIT_FAILURE);
+    }
 
     /* Printing welcome message. */
     tstamp = timestamp();
@@ -148,9 +152,14 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
     
+    gpioWrite(IR_PIN, 0);
+    gpioWrite(IR2_PIN, 0);
+
+    is_recording = false;
+
     /* Initialising timers */
     start_timer(&frm_timer);
-    start_timer(&rec_timer);
+//    start_timer(&rec_timer);
     start_timer(&end_timer);
 
 
@@ -163,7 +172,7 @@ int main(int argc, char** argv)
             /* Recording this frame. */
             framecount++;
 
-            if (check_timer(rec_timer, (long long unsigned) _NANOS_PER_SEC * RECORDING_SECONDS))
+            if (is_recording)
             {   
                 /* Turn off the Ir light. */
                 gpioWrite(IR_PIN, 0);
@@ -174,36 +183,19 @@ int main(int argc, char** argv)
             gpio_val = gpioRead(PIR_PIN);
             if (gpio_val == 1 && !is_recording)
             {
-                /* Send a message to the camera device so it begins recording video. */
-
-                /* Start the recording timer and temporarily prevent more detections. */
-                start_timer(&rec_timer);
                 is_recording = true;
 
-                printf("Motion detected\n");
+                tstamp = timestamp();
+                strfmt(&str_buff, "Motion detected at %s\n", tstamp);
+                fprintf(stdout, "%s", str_buff);
+                free(tstamp);
+                free(str_buff);
+                
                 /* Turn on the Ir light. */
                 gpioWrite(IR_PIN, 1);
                 gpioWrite(IR2_PIN, 1);
 
-//                /* Create a text file. */
-//                tstamp = timestamp();
-//                strfmt(&str_buff, "sudo -i -u %s touch \"%s/sensor/temp/%s.txt\"", username, loc_dir, tstamp);
-//                system(str_buff);
-//                free(str_buff);
-//
-//                /* Put the timestamp in the file. */
-//                strfmt(&str_buff, "sudo -i -u %s echo \"%s\" >> \"%s/sensor/temp/%s.txt\"", username, tstamp, loc_dir, tstamp);
-//                system(str_buff);
-//                free(str_buff);
-//
-//                /* Send the file to the camera device. */
-//                strfmt(&str_buff, "sudo -i -u %s scp \"%s/sensor/temp/%s.txt\" \"%s/camera/todo\"", username, loc_dir, tstamp, rem_dir);
-//                system(str_buff);
-//
-//                /* Print the detection time to the console before freeing memory. */
-//                fprintf(stdout, "%s", tstamp);
-//                free(str_buff);
-//                free(tstamp);
+                sleep(RECORDING_SECONDS);
             }
             else if (gpio_val == PI_BAD_GPIO)
             {
