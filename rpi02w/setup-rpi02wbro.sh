@@ -1,4 +1,4 @@
-#1/bin/bash
+#!/bin/bash
 
 #repo_name=${PWD##*/}
 #repo_name=${repo_name:-/}
@@ -41,7 +41,7 @@ sudo apt update
 sudo apt full-upgrade -y
 
 printf "\nInstalling some utilities and dependencies...\n"
-sudo apt install git dkms build-essential cmake unzip openvpn libelf-dev linux-headers-$(uname -r) -y
+sudo apt install git dkms build-essential cmake clangd unzip openvpn libelf-dev linux-headers-$(uname -r) -y
 
 if [ "${install_vim}" != "n" ]; then
 	printf "\nInstalling vim...\n"
