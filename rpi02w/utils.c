@@ -326,3 +326,242 @@ void print(FILE* fs, char* (strfmt))
     free(time_stamp);
     free(strfmt);
 }
+
+/******************************Terminal***********************************/
+
+void exec(char* cmd)
+{
+    system(cmd);
+    free(cmd);
+}
+
+/**
+ * This function clears the entire terminal and positions the cursor at home.
+ */
+void clear()
+{
+    /* Clearing the terminal and putting the cursor at home. */
+    system("tput clear");
+}
+
+/**
+ * This function clears the current line the terminal cursor is on from
+ * the position of the cursor to the line's beginning.
+ */
+void clearb()
+{
+    /* Clearing from the cursor to the beginning of the line. */
+    system("tput el1");
+}
+
+/**
+ * This function clears the current line the terminal cursor is on from
+ * the position of the cursor to the line's end.
+ */
+void clearf()
+{
+    /* Clearing from the cursor to the end of the line. */
+    system("tput el");
+}
+
+/**
+ * This function clears the entire line that the terminal cursor is currently
+ * on.
+ */
+void clearfb()
+{
+    /* Clearing the line that the terminal cursor is currently on. */
+    clearf();
+    clearb();
+}
+
+/**
+ * This function returns the number of rows and columns of the terminal.
+ */
+cart2d get_res()
+{
+    cart2d res;      /* Storage for the rows and columns. */
+    FILE* rfp;      /* File stream for the rows file. */
+    FILE* cfp;      /* File stream for the columns file. */
+    char rbuf[5];   /* The number of rows. */
+    char cbuf[5];   /* The number of columns. */
+
+    /* Creating a temporary directory to store the files. */
+    system("if [ ! -d temp/ ]; then\nmkdir temp/\nfi");
+
+    /* Writing the number of rows and columns to their files. */
+    system("tput lines >> temp/screen_rows.txt");
+    system("tput cols >> temp/screen_cols.txt");
+
+    /* Opening the files. */
+    rfp = openfs("temp/screen_rows.txt", "r");
+    cfp = openfs("temp/screen_cols.txt", "r");
+
+    /* Getting the number of rows and columns from the files. */
+    fgets(rbuf, sizeof(rbuf), rfp);
+    fgets(cbuf, sizeof(cbuf), cfp);
+
+    /* Converting the number of rows and columns to integers. */
+    res.x = atoi(cbuf); //strtol( cbuf, &end, 10 );
+    res.y = atoi(rbuf); //strtol( rbuf, &end, 10 );
+
+    /* Closing the files. */
+    closefs(rfp);
+    closefs(cfp);
+
+    /* Deleting the files. */
+    system("rm -rf temp");
+
+    /* Returning the number of rows and columns that the terminal has. */
+    return res;
+}
+
+/**
+ * This function moves the terminal cursor a number of rows or columns
+ * equal to the number provided to the function, and in a direction that is
+ * also provided.
+ */
+void move_cursor(enum directions direction, unsigned int n)
+{
+    char* cmd; /* The command. */
+
+    /* Creating the command. */
+    switch (direction)
+    {
+        case ABOVE:
+            exec(strfmt(cmd, "tput cuu %d", n));
+            break;
+        case BELOW:
+            exec(strfmt(cmd, "tput cud %d", n));
+            break;
+        case BEFORE:
+            exec(strfmt(cmd, "tput cub %d", n));
+            break;
+        case AFTER:
+            exec(strfmt(cmd, "tput cuf %d", n));
+            break;
+    }
+}
+
+/**
+ * This function prints the text file at the file path provided to it. It
+ * prints the text file in the colours and mode that are provided to
+ * the function.
+ */
+void print_fs_mod(char* filepath, cart2d origin, enum termcolours colour,
+                                                enum textmodes mode)
+{
+    FILE* fs;   /* Pointer to the file stream. */
+    char* line; /* The text in the file. */
+
+    /* Ensuring that the buffer is set to NULL. */
+    line = NULL;
+
+    /* Opening the file. */
+    fs = openfs(filepath, "r");
+
+    /* Setting the text mode and foreground colour. */
+    text_mode(mode);
+    text_fcol(colour);
+
+    /* Reading the line from the file. */
+    while (readfsl(fs, &line))
+    {
+        /* Drawing the line. */
+        print_str(line, origin);
+
+        /* Getting ready to draw the next line. */
+        origin.y++;
+        free(line);
+        line = NULL;
+    }
+
+    /* Changing the text-mode and colour back to normal. */
+    text_mode(NORMAL);
+
+    /* Closing the file. */
+    closefs(fs);
+}
+
+/**
+ * This function prints the string provided to it at the position that is
+ * also provided to the function.
+ */
+void print_str(char* str, cart2d pos)
+{
+    char* cmd;  // The command
+
+    /* Printing the string. */
+    put_cursor(pos.x, pos.y);
+    exec(strfmt(cmd, "printf \"%s\"", str));
+}
+
+/**
+ * This function prints the string provided to it at the position
+ * that is also provided. It prints the string in the colours and in the
+ * mode provided.
+ */
+void print_str_mod(char* str, cart2d pos, enum termcolours fcol,
+                                         enum textmodes mode)
+{
+    /* Setting the text mode and foreground colour. */
+    text_mode(mode);
+    text_fcol(fcol);
+
+    /* Printing the string. */
+    print_str(str, pos);
+
+    /* Reverting changes to the textcolours and mode. */
+    text_mode(NORMAL);
+}
+
+
+/**
+ * This function places the terminal at the row and column numbers
+ * provided to it.
+ */
+void put_cursor(unsigned int col, unsigned int row)
+{
+    char* cmd;   /* The command. */
+
+    /* Setting the cursor position. */
+    exec(strfmt(cmd, "tput cup %d %d", row, col));
+}
+
+/**
+ * This function sets the background colour of the terminal cursor.
+ */
+void text_bcol(enum termcolours c)
+{
+    char* cmd;  /* The command. */
+
+    /* Setting the background colour. */
+    exec(strfmt(cmd, "tput setab %d", c));
+}
+
+/**
+ * This function sets the foreground colour of the temrinal cursor.
+ */
+void text_fcol(enum termcolours c)
+{
+    char* cmd;   /* The command. */
+
+    /* Setting the colour. */
+    exec(strfmt(cmd, "tput setaf %d", c));
+}
+
+/**
+ * This function changes the terminal text-mode.
+ */
+void text_mode(enum textmodes m)
+{
+    /* Changing the terminal text-mode. */
+    switch (m)
+    {
+        case BOLD       : system( "tput bold"  ); break;
+        case NORMAL     : system( "tput sgr0"  ); break;
+        case BLINK      : system( "tput blink" ); break;
+        case REVERSE    : system( "tput smso"  ); break;
+        case UNDERLINE  : system( "tput smul"  ); break;
+    }
+}

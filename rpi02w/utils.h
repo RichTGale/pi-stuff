@@ -18,6 +18,15 @@
  */
 #define NANOS_PER_SEC 1000000000
 
+/********************************* Types *************************************/
+
+typedef struct {
+    int x;
+    int y;
+} cart2d;
+
+/******************************** in / out ***********************************/
+
 /**
  * This function opens a file that has a name that matches fname. It opens the
  * file in the mode specified by mode.
@@ -100,5 +109,116 @@ char* timestamp();
  * This function adds a timestamp to the beginning of the output.
  */
 void print(FILE* fs, char* strfmt);
+
+/******************************* Terminal ************************************/
+
+#define LINE_HEIGHT 8
+#define CHAR_WIDTH LINE_HEIGHT
+
+enum directions {
+    ABOVE,
+    BELOW,
+    BEFORE,
+    AFTER
+    };
+
+enum termcolours { 
+    BLACK,
+    RED,
+    GREEN,
+    YELLOW,
+    BLUE,
+    MAGENTA,
+    CYAN,
+    WHITE,
+    };
+
+enum textmodes { 
+    BOLD,
+    NORMAL,
+    BLINK,
+    REVERSE,
+    UNDERLINE
+    };
+
+void exec(char* cmd);
+
+/**
+ * This function clears the terminal.
+ */
+void clear();
+
+/**
+ * This function clears the current line the terminal cursor is on from
+ * the position of the cursor to the line's beginning.
+ */
+void clearb();
+
+/**
+ * This function clears the current line the terminal cursor is on from
+ * the position of the cursor to the line's end.
+ */
+void clearf();
+
+/**
+ * This function clears the entire line that the terminal cursor is currently
+ * on.
+ */
+void clearfb();
+
+/**
+ * This function returns the number of rows and columns of the terminal.
+ */
+cart2d get_res();
+
+/**
+ * This function moves the terminal cursor a number of rows or columns
+ * equal to the number provided to the function, and in a direction that is
+ * also provided.
+ */
+void move_cursor(enum directions direction, unsigned int n);
+
+/**
+ * This function prints the text file at the file path provided to it. It
+ * prints the text file in the colours and mode that are provided to
+ * the function.
+ */
+void print_fs_mod(char* filepath, cart2d origin, enum termcolours colour, 
+                                                enum textmodes mode);
+
+/**
+ * This function prints the string provided to it at the position that is
+ * also provided to the function.
+ */
+void print_str(char* str, cart2d pos);
+
+/**
+ * This function prints the string provided to it at the location
+ * that is also provided. It prints the string in the colours and in the
+ * mode provided.
+ */
+void print_str_mod(char* str, cart2d origin, enum termcolours fcol,
+                                            enum textmodes mode);
+
+/**
+ * This function places the terminal cursor at the row and column numbers
+ * provided to it.
+ */
+void put_cursor(unsigned int col, unsigned int row);
+
+/**
+ * This function sets the background colour of the terminal cursor.
+ */
+void text_bcol(enum termcolours c);
+
+/**
+ * This function sets the foreground colour of the temrinal cursor.
+ */
+void text_fcol(enum termcolours c);
+
+/**
+ * This function changes the terminal text-mode.
+ */
+void text_mode(enum textmodes m);
 
 #endif
