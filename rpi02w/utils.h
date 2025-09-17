@@ -47,6 +47,7 @@ bool readfsc(FILE* fs, char* buf);
  * Make sure to free() the buffer when you're finished with it.
  */
 bool readfsl(FILE* fs, char** buf);
+
 /**
  * This function writes the char provided to it to the file stream provided to
  * it.
@@ -98,6 +99,6 @@ char* timestamp();
  * passed as the first actual parameter.
  * This function adds a timestamp to the beginning of the output.
  */
-void print(FILE* fs, char* (strfmt));
+void print(FILE* fs, char* strfmt);
 
 #endif

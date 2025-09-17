@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#repo_name=${PWD##*/}
-#repo_name=${repo_name:-/}
 device_path=${PWD}
 
 
@@ -98,9 +96,9 @@ sudo dkms install $PWD
 sudo make install_fw
 
 printf "\nBuilding IR light program...\n"
-cp ${device_path}/let-there-be-light.c ${HOME}/Programs
+cp ${device_path}/ltbl.c ${HOME}/Programs
 cd ${HOME}/Programs
-gcc -Wall -pthread -o let-there-be-light let-there-be-light.c -lpigpio -lrt
+gcc -Wall -pthread -o ltbl ltbl.c -lpigpio -lrt
 
 printf "\nCopying remote sending file(s)...\n"
 cp ${device_path}/send-files.sh ${HOME}/Programs/
