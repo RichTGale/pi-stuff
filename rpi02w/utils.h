@@ -18,7 +18,20 @@
  */
 #define NANOS_PER_SEC 1000000000
 
+
 /********************************* Types *************************************/
+
+/**
+ * This type is to be used in conjuction with log_init() and out().
+ * It is made with the intention of having a dedicated filestream for logging
+ * program information. I might change it to be more generiic at a later date.
+ */
+typedef struct log_data {
+    FILE* _log;
+    char* buf;
+    void* out;  /* Function pointer. */
+} log;
+
 
 typedef struct {
     int x;
@@ -26,6 +39,16 @@ typedef struct {
 } cart2d;
 
 /******************************** in / out ***********************************/
+
+
+/**
+ * This function returns a pointer to a filestream. It is streaming to a file
+ * who's name is defined by the parameter passed this function.
+ * It is made with the intention of having a dedicated filestream for logging
+ * program information.
+ */
+log* log_init(char* fname);
+
 
 /**
  * This function opens a file that has a name that matches fname. It opens the
@@ -81,7 +104,7 @@ size_t vbytesfmt(va_list lp, char* fmt);
  * string based on the argument list, then concatenates the argument list into 
  * the supplied format and stores it in the supplied string pointer.
  */
-char* strfmt(char* sp, char *fmt, ...);
+char* strfmt(char* buf, char *fmt, ...);
 
 /**
  * This function removes the char element from the string provided to it which
@@ -103,12 +126,13 @@ void sdelchar(char* sp, char remove);
 char* timestamp();
 
 /**
- * This function sends the return value of strfmt() (see above), which is
- * passed as print()'s second actual parameter to the file stream that is
- * passed as the first actual parameter.
- * This function adds a timestamp to the beginning of the output.
+ * This function outputs to a filestream.
+ * It dynamically allocates the neccessary amount of memory to the buffer
+ * parameter based on the format string and argument list parameters, then
+ * outputs it to filestream parameter.
+ * This function handles all memory allocation and freeing internally.
  */
-void print(FILE* fs, char* strfmt);
+void out(FILE* fs, char* buf, char *fmt, ...);
 
 /******************************* Terminal ************************************/
 

@@ -1,6 +1,22 @@
 #include "utils.h"
 
 /**
+ * This function returns a pointer to a filestream. It is streaming to a file
+ * who's name is defined by the parameter passed this function.
+ * It is made with the intention of having a dedicated filestream for logging
+ * program information. I might change it to be more generiic at a later date.
+ */
+log* log_init(char* fname)
+{
+    log* l = (log*) malloc(sizeof(struct log_data));
+
+    l->_log = openfs(fname, "a");
+    l->out = &out;
+
+    return l;
+}
+
+/**
  * This function opens a file that has a name that matches fname. It opens the
  * file in the mode specified by mode.
  * If there is an error it will be printed on stderr and the program 
@@ -10,6 +26,7 @@
 FILE* openfs(char* fname, char* mode)
 {
     FILE* fs;       /* The pointer to the file stream. */
+    char* buf;
     char* tstamp;   /* A time stamp. */
 
     /* Opening the file. */
@@ -17,10 +34,13 @@ FILE* openfs(char* fname, char* mode)
         return fs;
 
     /* An error occured so we're printing an error message. */
-    fprintf(stderr, 
-            "[ %s ] ERROR: In function openfs(): "
-            "Could not open file %s: %s\n",
-            (tstamp = timestamp()), fname, strerror(errno));
+    out(
+        stderr,
+        buf,
+        "[ %s ] ERROR: In function openfs(): "
+        "Could not open file %s: %s\n",
+        (tstamp = timestamp()), fname, strerror(errno)
+        );
 
     /* De-allocating memory. */
     free(tstamp);
@@ -174,7 +194,7 @@ size_t vbytesfmt(va_list lp, char* fmt)
  * string based on the argument list, then concatenates the argument list into 
  * the supplied format and stores it in the supplied string pointer.
  */
-char* strfmt(char* sp, char *fmt, ...)
+char* strfmt(char* buf, char *fmt, ...)
 {
     va_list lp;     /* Pointer to the list of arguments. */
     size_t bytes;   /* The number of bytes the string needs. */
@@ -186,15 +206,15 @@ char* strfmt(char* sp, char *fmt, ...)
     bytes = vbytesfmt(lp, fmt);
 
     /* Allocating memory to the string. */
-    sp = (char*) malloc(bytes);
+    buf = (char*) malloc(bytes);
 
     /* Creating the string. */
-    vsprintf(sp, fmt, lp);
+    vsprintf(buf, fmt, lp);
 
     /* Assuring a clean finish to the argument list. */
     va_end(lp);
 
-    return sp;
+    return buf;
 }
 
 /**
@@ -272,7 +292,7 @@ char* timestamp()
     {
         /* An error occured so we're printing an error message to and exiting
          * the program. */
-        print(stderr, strfmt(output,
+        out(stderr, strfmt(output,
                             "ERROR: In function timestamp(): "
                             "Calender time is not available\n")
                 );
@@ -310,21 +330,35 @@ char* timestamp()
 }
 
 /**
- * This function sends the return value of strfmt() (see above), which is
- * passed as print()'s second actual parameter to the file stream that is
- * passed as the first actual parameter.
- * This function adds a timestamp to the beginning of the output.
+ * This function outputs to a filestream.
+ * It dynamically allocates the neccessary amount of memory to the buffer
+ * parameter based on the format string and argument list parameters, then
+ * outputs it to filestream parameter.
+ * This function handles all memory allocation and freeing internally.
  */
-void print(FILE* fs, char* (strfmt))
+void out(FILE* fs, char* buf, char *fmt, ...)
 {
-    char* time_stamp; /* The date and time. */ 
+    va_list lp;     /* Pointer to the list of arguments. */
+    size_t bytes;   /* The number of bytes the string needs. */
 
-    /* Sending the text to the file stream. */
-    fprintf(fs, "[ %s ] %s", (time_stamp = timestamp()), strfmt);
+    /* Pointing to the first argument. */
+    va_start(lp, fmt);
 
-    /* Freeing memory. */
-    free(time_stamp);
-    free(strfmt);
+    /* Getting the number of bytes the string will need to be allocated. */
+    bytes = vbytesfmt(lp, fmt);
+
+    /* Allocating memory to the string. */
+    buf = (char*) malloc(bytes);
+
+    /* Creating the string. */
+    vsprintf(buf, fmt, lp);
+
+    /* Assuring a clean finish to the argument list. */
+    va_end(lp);
+    
+    fprintf(fs, "%s", buf);
+
+    free(buf);
 }
 
 /******************************Terminal***********************************/
