@@ -1,18 +1,19 @@
-
 #include <stdlib.h>
 
 #include "utils.h"
 
-
 int main()
 {
-    log* _log;
+    log_t* log;
 
-    _log = log_init("log.txt");
+    clear();
 
-    _log->out(_log->fs, "Program Started.\n");
+    log = log_init("log.txt");
+    log->out(log->fs, "Program Started.\n");
 
-    log_term(_log); 
+
+
+    log_term(log); 
 
     exit(EXIT_SUCCESS);
 }

@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <errno.h>
 //#include <unistd.h>
-//#include <termios.h>
+#include <termios.h>
 
 /**
  * There is this many nanoseconds in a second.
@@ -28,8 +28,8 @@
  */
 typedef struct log_data {
     FILE* fs;
-    void (*out)(FILE* fs, char* fmt, ...);
-} log;
+    void (*out)(FILE* fs, char* fmt, ...);  /* Function pointer: fsout() */
+} log_t;
 
 
 typedef struct {
@@ -46,9 +46,9 @@ typedef struct {
  * It is made with the intention of having a dedicated filestream for logging
  * program information.
  */
-log* log_init(char* fname);
+log_t* log_init(char* fname);
 
-void log_term(log* l);
+void log_term(log_t* m);
 
 /**
  * This function opens a file that has a name that matches fname. It opens the

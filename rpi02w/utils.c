@@ -6,9 +6,9 @@
  * It is made with the intention of having a dedicated filestream for logging
  * program information. I might change it to be more generiic at a later date.
  */
-log* log_init(char* fname)
+log_t* log_init(char* fname)
 {
-    log* l = (log*) malloc(sizeof(struct log_data));
+    log_t* l = (log_t*) malloc(sizeof(struct log_data));
 
     l->fs = openfs(fname, "a");
     l->out = &fsout;
@@ -16,7 +16,7 @@ log* log_init(char* fname)
     return l;
 }
 
-void log_term(log* l)
+void log_term(log_t* l)
 {
     closefs(l->fs);
     free(l);
