@@ -9,11 +9,12 @@
  * Version: 1.0
  */
 
-#ifndef TIMER_NANO_H
-#define TIMER_NANO_H
+#ifndef TIMER_SEC_H
+#define TIMER_SEC_H
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h> /* strerror() */
 #include <stdarg.h>
 #include <time.h>
@@ -21,14 +22,7 @@
 
 #include "utils.h"
 
-/**
- * The timer can either have elapsed or not have elapsed.
- */
-enum timer_states 
-{
-    NOT_ELAPSED,
-    HAS_ELAPSED
-};
+
 
 /**
  * The timer data structure.
@@ -55,8 +49,11 @@ void timer_sec_reinit(timer_sec* ts, log* l);
  * having been timing for longer than the wait_time parameter passed to it,
  * otherwise it will return NOT_ELAPSED;
  */
-enum timer_states timer_sec_alarm(timer_sec ts, long long wait_time, log* l);
+bool timer_sec_elapsed(timer_sec ts, long long wait_time, log* l);
 
+/**
+ * This function destroys/deallocates memory from a timer_sec.
+ */
 void timer_sec_term(timer_sec* ts);
 
 #endif /* TIMER_SEC_H */

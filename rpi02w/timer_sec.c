@@ -87,7 +87,7 @@ void timer_sec_reinit(timer_sec* ts, log* l)
  * having been timing for longer than the wait_time parameter passed to it,
  * otherwise it will return NOT_ELAPSED;
  */
-enum timer_states timer_sec_alarm(timer_sec ts, long long wait_time, log* l)
+bool timer_sec_elapsed(timer_sec ts, long long wait_time, log* l)
 {
     time_t err;
 
@@ -122,13 +122,16 @@ enum timer_states timer_sec_alarm(timer_sec ts, long long wait_time, log* l)
     if (ts.elapsed >= wait_time)
     {
         /* Returning that the timer has ended (the alarm has gone off). */
-        return HAS_ELAPSED;
+        return true;
     }
 
     /* Returning that the timer has yet to end (the alarm hasn't gone off). */ 
-    return NOT_ELAPSED;
+    return false;
 }
 
+/**
+ * This function destroys/deallocates memory from a timer_sec.
+ */
 void timer_sec_term(timer_sec* ts)
 {
     free(ts);

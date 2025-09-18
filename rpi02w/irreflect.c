@@ -3,56 +3,63 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
+#include <limits.h>
 #include <pigpio.h>
 
-#include "timer_nano.h"
-
-
+#include "utils.h"
+//#include "timer_nano.h"
+#include "timer_sec.h"
 
 void print_help()
 {
     char* buf;
 
-    print(stdout, strfmt(
-                buf, 
-                "USAGE: sensor [OPTIONS]\n\n"
-                "OPTIONS:\n"
-                "   -h  Print this help menu.\n"
-                "   -t  Length of time (in hours) to run the program (default 1).\n"
-                "\n"
-                "EXAMPLE:\n"
-                "   sudo ./sensor -t 5\n")
-         );
+    fsout(
+            stdout, 
+            "USAGE:\n" 
+            "   sensor [OPTIONS]\n\n"
+            "OPTIONS:\n"
+            "   -h  | --help        Print this help menu.\n"
+            "         --fps         The number of frames per second."
+            "         --run-time    Length of time (in hours) to run the program (default 24).\n"
+            "         --inf-time    Length of time (in seconds) to turn on the ir light after motion was detected (default 15).\n\n"
+            "EXAMPLE:\n"
+            "   sensor --rec-time 30 --frm-time 10 --run-time 5\n\n"
+            "NOTE: Needs to be run with root privelages (i.e sudo)\n");
 }
 
 
 int main(int argc, char** argv)
 {
-    timer_nano* frm_timer;          /* Timer for framerate. */
-    const int FPS = 2;       /* The number of frames per second. */
-    const long long int NPS = NANOS_PER_SEC; /* The number of nanoseconds per second. Defined in "timer_nano.h". */
-    const int IR_SENSE = 27;             /* Pin number of the IR sensor. */
-    const int IR_LIGHT = 4;
-	const int REC_TIME = 15;   /* Seconds to wait after a detection. */
-    int rec_frms;
-    int frms_rec;
-    bool run;                    /* Whether the program is running. */
-    bool rec;                  /* Whether the program is recording. */
-    char* buf;                     /* Buffer to make strings. */
-    int err;                       /* An error code/id. */
-    int gpio_val;                       /* The valjue read from the PIR sensor. */
-    unsigned int run_time;             /* The number of hours to run the program. */
-    long long int frm_cnt;  /* Counts how many frames have happened. */
-    long long int npf;  /* The number of nanoseconds per frame. */
+    log* l;
+    timer_sec* frm_timer;                           /* Timer for framerate. */
+    timer_sec* run_timer;                           /* Timer for program ending. */
+    timer_sec* inf_timer;                           /* Timer for infrared light. */
+//    const unsigned long long NPS = NANOS_PER_SEC;   /* The number of nanoseconds per second. Defined in "timer_nano.h". */
+    const unsigned int INF_SENSE = 27;              /* gpio number of the IR sensor. */
+    const unsigned int INF_LIGHT = 4;               /* gpio number of the IR light. */
+    unsigned long long frm_time;                    /* The number of nanoseconds per frame. */
+	unsigned long run_time;                         /* Program run time in hours. */
+	unsigned int inf_time;                          /* Light up time in seconds. */
+    unsigned int fps;                               /* The number of frames per second. */
+    int val;                                        /* A value returned by a function. */
+    bool run;                                       /* Whether the program is running. */
+    bool inf;                                       /* Whether the infrared light is on. */
 
-    /* Initialising some variables. */
-    npf = NPS / FPS;
-    rec_frms = FPS * REC_TIME;
-    frms_rec = 0;
+    l = log_init("irreflect-log.txt");
+    frm_timer = timer_sec_init(l);
+    run_timer = timer_sec_init(l);
+    inf_timer = timer_sec_init(l);
+    fps = 4;
+    frm_time = /* NPS* / */ fps;
+    run_time = 24;
+    inf_time = 15;
+    val = 0;
     run = true;
-    rec = false;
-    frm_cnt = 0;
-    err = true;
+    inf = false;
+    
+    /* Printing welcome message. */
+    fsout(stdout, "Program started. Will run for %d hours\n", run_time);
 
     for (int i = 1; i < argc; i+=2)
     {
@@ -61,23 +68,47 @@ int main(int argc, char** argv)
             print_help();
             exit(EXIT_FAILURE);
         }
-        else if (!strcmp(argv[i], "-t"))
+        else if (!strcmp(argv[i], "--fps"))
+        {
+            frm_time = atoi(argv[i+1]);
+            if (frm_time > ULLONG_MAX)
+            {
+                l->out(l->fs, "ARG ERROR: --frm-time must be in range 0 --> %d.\n", UINT_MAX);
+                fsout(stderr, "ARG ERROR: --frm-time must be in range 0 --> %d.\n", UINT_MAX);
+                val = 1;
+            }
+            else
+            {
+                frm_time = /* NPS / */ fps;
+            }
+        }
+        else if (!strcmp(argv[i], "--run-time"))
         {
             run_time = atoi(argv[i+1]);
-            err = 0;
+            if (inf_time > ULLONG_MAX)
+            {
+                l->out(l->fs, "ARG ERROR: --run-time must be in range 0 --> %d.\n", ULLONG_MAX);
+                fsout(stderr, "ARG ERROR: --run-time must be in range 0 --> %d.\n", ULLONG_MAX);
+                val = 1;
+            }
+        }
+        else if (!strcmp(argv[i], "--inf-time"))
+        {
+            inf_time = atoi(argv[i+1]);
+            if (inf_time > UINT_MAX)
+            {
+                l->out(l->fs, "ARG ERROR: --inf-time must be in range 0 --> %d.\n", UINT_MAX);
+                fsout(stderr, "ARG ERROR: --inf-time must be in range 0 --> %d.\n", UINT_MAX);
+                val = 1;
+            }
         }
     }
 
-    if (err)
+    if (val)
 	{
         print_help();
         exit(EXIT_FAILURE);
     }
-
-    /* Printing welcome message. */
-    
-    print(stdout, strfmt(buf, "Program started. Will run for %d hours\n", run_time));
-
 
     /* Initialising pigpio. */
     if (gpioInitialise() < 0)
@@ -87,9 +118,9 @@ int main(int argc, char** argv)
     }
 
     /* Creating gpio input to read the e18-d80nk sensor. */
-    if ((err = gpioSetMode(IR_SENSE, PI_INPUT)) != 0)
+    if ((val = gpioSetMode(INF_SENSE, PI_INPUT)) != 0)
     {
-        if (err == PI_BAD_GPIO)
+        if (val == PI_BAD_GPIO)
         {
             fprintf(stdout, "Error setting pinmode: PI_BAD_GPIO\n");
         }
@@ -101,9 +132,9 @@ int main(int argc, char** argv)
     }
 
     /* Creating gpio input to write the IR light. */
-    if ((err = gpioSetMode(IR_LIGHT, PI_OUTPUT)) != 0)
+    if ((val = gpioSetMode(INF_LIGHT, PI_OUTPUT)) != 0)
     {
-        if (err == PI_BAD_GPIO)
+        if (val == PI_BAD_GPIO)
         {
             fprintf(stdout, "Error setting pinmode: PI_BAD_GPIO\n");
         }
@@ -115,22 +146,18 @@ int main(int argc, char** argv)
     }
     else
     {
-        gpioWrite(IR_LIGHT, 0);
+        gpioWrite(INF_LIGHT, 0);
     }
 
-    rec = false;
-
-    /* Initialising timers */
-    frm_timer = timer_nano_init();
-
+    timer_sec_reinit(frm_timer, l);
 
     /* Running the loop. */ 
     while (run)
     {
         /* Checking if it's time to run a frame. */
-        if (timer_nano_alarm(*frm_timer, npf))
+        if (timer_sec_elapsed(*frm_timer, frm_time, l))
         {
-            if ((gpio_val = gpioRead(IR_SENSE)) == 0)
+            if ((val = gpioRead(INF_SENSE)) == 0)
             {
                 print(stdout, strfmt(buf, "Motion detected\n"));
                 gpioWrite(IR_LIGHT, 1);

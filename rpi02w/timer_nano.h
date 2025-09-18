@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h> /* strerror() */
 #include <stdarg.h>
 #include <time.h>
@@ -23,15 +24,6 @@
  * There is this many nanoseconds in a second.
  */
 #define NANOS_PER_SEC 1000000000
-
-/**
- * The timer can either have elapsed or not have elapsed.
- */
-enum timer_states 
-{
-    NOT_ELAPSED,
-    HAS_ELAPSED
-};
 
 /**
  * The timer data structure.
@@ -58,28 +50,11 @@ void timer_nano_reinit(timer_nano* tn);
  * having been timing for longer than the wait_time parameter passed to it,
  * otherwise it will return NOT_ELAPSED;
  */
-enum timer_states timer_nano_alarm(timer_nano tn, long long wait_time);
+bool timer_nano_alarm(timer_nano tn, long long wait_time);
 
 /**
- * This function dynamically allocates only the needed amount of memory to a
- * string based on the argument list, then concatenates the argument list into 
- * the supplied format and stores it in the supplied string pointer.
+ * This function destroys/deallocates memory from a timer_nano.
  */
-char* strfmt(char* sp, char *fmt, ...);
-
-/**
- * This function returns a string that represent the current time.
- * For reasons detailed in a comment within this function, you must
- * free() the string that this function returns.
- */
-char* timestamp();
-
-/**
- * This function sends the return value of strfmt() (see above), which is
- * passed as print()'s second actual parameter to the file stream that is
- * passed as the first actual parameter.
- * This function adds a timestamp to the beginning of the output.
- */
-void print(FILE* fs, char* strfmt);
+void timer_nano_term(timer_nano* tn);
 
 #endif /* TIMER_NANO_H */
