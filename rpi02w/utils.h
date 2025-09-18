@@ -127,12 +127,11 @@ char* timestamp();
 
 /**
  * This function outputs to a filestream.
- * It dynamically allocates the neccessary amount of memory to the buffer
- * parameter based on the format string and argument list parameters, then
- * outputs it to filestream parameter.
- * This function handles all memory allocation and freeing internally.
+ * It dynamically allocates the neccessary amount of memory to an internal
+ * buffer that is based on the format string and argument list
+ * parameters, then outputs the buffer to the filestream parameter.
  */
-void out(FILE* fs, char* buf, char *fmt, ...);
+void out(FILE* fs, char *fmt, ...);
 
 /******************************* Terminal ************************************/
 

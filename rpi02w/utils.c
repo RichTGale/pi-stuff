@@ -26,7 +26,6 @@ log* log_init(char* fname)
 FILE* openfs(char* fname, char* mode)
 {
     FILE* fs;       /* The pointer to the file stream. */
-    char* buf;
     char* tstamp;   /* A time stamp. */
 
     /* Opening the file. */
@@ -36,7 +35,6 @@ FILE* openfs(char* fname, char* mode)
     /* An error occured so we're printing an error message. */
     out(
         stderr,
-        buf,
         "[ %s ] ERROR: In function openfs(): "
         "Could not open file %s: %s\n",
         (tstamp = timestamp()), fname, strerror(errno)
@@ -55,6 +53,7 @@ FILE* openfs(char* fname, char* mode)
  */
 void closefs(FILE* fs)
 {
+    char* buf;
     char* tstamp;   /* A time stamp. */
 
     /* Closing the file stream. */
@@ -62,8 +61,10 @@ void closefs(FILE* fs)
         return;
     
     /* An error occured so we are printing an error message. */
-    fprintf(stderr,
-            "[ %s ] ERROR: In function closefs: %s\n", 
+    out(
+        stderr,
+        buf,
+        "[ %s ] ERROR: In function closefs: %s\n", 
             (tstamp = timestamp()), strerror(errno));
 
     /* De-allocating memory. */
@@ -331,13 +332,14 @@ char* timestamp()
 
 /**
  * This function outputs to a filestream.
- * It dynamically allocates the neccessary amount of memory to the buffer
- * parameter based on the format string and argument list parameters, then
- * outputs it to filestream parameter.
- * This function handles all memory allocation and freeing internally.
+ * It dynamically allocates the neccessary amount of memory to an internal
+ * buffer that is based on the format string and argument list
+ * parameters, then outputs the buffer to the filestream parameter.
  */
-void out(FILE* fs, char* buf, char *fmt, ...)
+void out(FILE* fs, char *fmt, ...)
 {
+    char* _timestamp;
+    char* buf;
     va_list lp;     /* Pointer to the list of arguments. */
     size_t bytes;   /* The number of bytes the string needs. */
 
@@ -355,9 +357,12 @@ void out(FILE* fs, char* buf, char *fmt, ...)
 
     /* Assuring a clean finish to the argument list. */
     va_end(lp);
-    
-    fprintf(fs, "%s", buf);
 
+    _timestamp = timestamp();
+
+    fprintf(fs, "i[ %s ] %s", _timestamp, buf);
+
+    free(_timestamp);
     free(buf);
 }
 
