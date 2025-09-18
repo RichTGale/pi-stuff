@@ -10,10 +10,16 @@ log* log_init(char* fname)
 {
     log* l = (log*) malloc(sizeof(struct log_data));
 
-    l->_log = openfs(fname, "a");
-    l->out = &out;
+    l->fs = openfs(fname, "a");
+    l->out = &fsout;
 
     return l;
+}
+
+void log_term(log* l)
+{
+    closefs(l->fs);
+    free(l);
 }
 
 /**
@@ -26,22 +32,17 @@ log* log_init(char* fname)
 FILE* openfs(char* fname, char* mode)
 {
     FILE* fs;       /* The pointer to the file stream. */
-    char* tstamp;   /* A time stamp. */
 
     /* Opening the file. */
     if ((fs = fopen(fname, mode)) != NULL)
         return fs;
 
     /* An error occured so we're printing an error message. */
-    out(
-        stderr,
-        "[ %s ] ERROR: In function openfs(): "
-        "Could not open file %s: %s\n",
-        (tstamp = timestamp()), fname, strerror(errno)
-        );
-
-    /* De-allocating memory. */
-    free(tstamp);
+    fsout(
+            stderr,
+            "ERROR: In function openfs(): "
+            "Could not open file %s: %s\n",
+            fname, strerror(errno));
 
     /* Freeing memory. */
     exit(EXIT_FAILURE);
@@ -53,22 +54,15 @@ FILE* openfs(char* fname, char* mode)
  */
 void closefs(FILE* fs)
 {
-    char* buf;
-    char* tstamp;   /* A time stamp. */
-
     /* Closing the file stream. */
     if (fclose(fs) == 0)
         return;
     
     /* An error occured so we are printing an error message. */
-    out(
-        stderr,
-        buf,
-        "[ %s ] ERROR: In function closefs: %s\n", 
-            (tstamp = timestamp()), strerror(errno));
-
-    /* De-allocating memory. */
-    free(tstamp);
+    fsout(
+            stderr,
+	        "ERROR: In function closefs: %s\n", 
+	         strerror(errno));
 
     /* Exiting the program. */
     exit(EXIT_FAILURE);
@@ -82,7 +76,6 @@ bool readfsc(FILE* fs, char* buf)
 {
     const bool SUCCESS = true;      /* Return value if success. */
     const bool END_OF_FILE = false; /* Return value if EOF. */
-    char* tstamp;
 
     /* Getting the next char from the file stream and checking if it was
      * successfully read. */
@@ -94,12 +87,10 @@ bool readfsc(FILE* fs, char* buf)
         return END_OF_FILE;
 
     /* An error occurred so we're printing an error message. */
-    fprintf(stderr,
-            "[ %s ] ERROR: In function readfsc(): %s\n",
-            (tstamp = timestamp()), strerror(errno));
-
-    /* De-allocating memory. */
-    free(tstamp);
+    fsout(
+            stderr,
+            "ERROR: In function readfsc(): %s\n",
+            strerror(errno));
 
     /* Exiting the program. */
     exit(EXIT_FAILURE);
@@ -117,7 +108,6 @@ bool readfsl(FILE* fs, char** buf)
     const bool SUCCESS = true;      /* Return value if success. */
     const bool END_OF_FILE = false; /* Return value if EOF. */
     size_t n;                       /* Allocated size of the buffer. */
-    char* tstamp;                   /* A time stamp. */
 
     /* Initialising how big the buffer is. */
     n = 0;
@@ -132,12 +122,10 @@ bool readfsl(FILE* fs, char** buf)
         return END_OF_FILE;
             
     /* An error occurred so we are printing an error message. */
-    fprintf(stdout,
-            "[ %s ] ERROR: In function readfsl: %s\n",
-            timestamp(), strerror(errno));
-
-    /* De-allocating memory. */
-    free(tstamp);
+    fsout(
+            stdout,
+            "ERROR: In function readfsl: %s\n",
+            strerror(errno));
 
     /* Exiting the program. */
     exit(EXIT_FAILURE);
@@ -150,7 +138,7 @@ bool readfsl(FILE* fs, char** buf)
 void writefsc(FILE* fs, char ch)
 {
     /* Writing the char to the file stream. */
-    fprintf(fs, "%c", ch); 
+    fsout(fs, "%c", ch); 
 }
 
 /**
@@ -286,17 +274,17 @@ char* timestamp()
     time_t current_time;    /* The current time. */
     char* stamp;            /* The time stamp. */
     char* stamp_cpy;        /* A Copy of the time stamp. */
-    char* output;           /* Output to filestream(s). */
 
     /* Obtaining the current time. */
     if ((current_time = time(NULL)) == ((time_t) - 1))
     {
         /* An error occured so we're printing an error message to and exiting
          * the program. */
-        out(stderr, strfmt(output,
-                            "ERROR: In function timestamp(): "
-                            "Calender time is not available\n")
-                );
+        fsout(
+                stderr, 
+                "ERROR: In function timestamp(): "
+                "Calender time is not available\n");
+
         exit(EXIT_FAILURE);
     }
 
@@ -305,10 +293,11 @@ char* timestamp()
     {
         /* An error occured converting so we're printing an error message
          * and exiting the program. */
-        print(stderr, strfmt(output, 
-                            "ERROR: In function timestamp(): "
-                            "Failure to convert the current time to a string.\n")
-                );
+        fsout(
+                stderr,
+                "ERROR: In function timestamp(): "
+                "Failure to convert the current time to a string.\n");
+
         exit(EXIT_FAILURE);
     }
 
@@ -336,7 +325,7 @@ char* timestamp()
  * buffer that is based on the format string and argument list
  * parameters, then outputs the buffer to the filestream parameter.
  */
-void out(FILE* fs, char *fmt, ...)
+void fsout(FILE* fs, char *fmt, ...)
 {
     char* _timestamp;
     char* buf;
@@ -360,7 +349,7 @@ void out(FILE* fs, char *fmt, ...)
 
     _timestamp = timestamp();
 
-    fprintf(fs, "i[ %s ] %s", _timestamp, buf);
+    fprintf(fs, "[ %s ] %s", _timestamp, buf);
 
     free(_timestamp);
     free(buf);

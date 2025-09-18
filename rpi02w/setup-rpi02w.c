@@ -10,7 +10,9 @@ int main()
 
     _log = log_init("log.txt");
 
-    
+    _log->out(_log->fs, "Program Started.\n");
+
+    log_term(_log); 
 
     exit(EXIT_SUCCESS);
 }

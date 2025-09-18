@@ -27,9 +27,8 @@
  * program information. I might change it to be more generiic at a later date.
  */
 typedef struct log_data {
-    FILE* _log;
-    char* buf;
-    void* out;  /* Function pointer. */
+    FILE* fs;
+    void (*out)(FILE* fs, char* fmt, ...);
 } log;
 
 
@@ -49,6 +48,7 @@ typedef struct {
  */
 log* log_init(char* fname);
 
+void log_term(log* l);
 
 /**
  * This function opens a file that has a name that matches fname. It opens the
@@ -131,7 +131,7 @@ char* timestamp();
  * buffer that is based on the format string and argument list
  * parameters, then outputs the buffer to the filestream parameter.
  */
-void out(FILE* fs, char *fmt, ...);
+void fsout(FILE* fs, char *fmt, ...);
 
 /******************************* Terminal ************************************/
 
