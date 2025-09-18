@@ -24,7 +24,7 @@ void print_help()
             "         --run-time    Length of time (in hours) to run the program (default 24).\n"
             "         --inf-time    Length of time (in seconds) to turn on the ir light after motion was detected (default 15).\n\n"
             "EXAMPLE:\n"
-            "   sensor --rec-time 30 --frm-time 10 --run-time 5\n\n"
+            "   sensor --rec-time 30 --fps 10 --run-time 5\n\n"
             "NOTE: Needs to be run with root privelages (i.e sudo)\n");
 }
 
@@ -69,11 +69,11 @@ int main(int argc, char** argv)
         }
         else if (!strcmp(argv[i], "--fps"))
         {
-            frm_time = atoi(argv[i+1]);
-            if (frm_time > ULLONG_MAX)
+            fps = atoi(argv[i+1]);
+            if (fps > UINT_MAX)
             {
-                l->out(l->fs, "ARG ERROR: --frm-time must be in range 0 --> %d.\n", UINT_MAX);
-                fsout(stderr, "ARG ERROR: --frm-time must be in range 0 --> %d.\n", UINT_MAX);
+                l->out(l->fs, "ARG ERROR: --fps must be in range 0 --> %d.\n", UINT_MAX);
+                fsout(stderr, "ARG ERROR: --fps must be in range 0 --> %d.\n", UINT_MAX);
                 val = 1;
             }
             else
@@ -84,10 +84,10 @@ int main(int argc, char** argv)
         else if (!strcmp(argv[i], "--run-time"))
         {
             run_time = atoi(argv[i+1]);
-            if (run_time > ULLONG_MAX)
+            if (run_time > ULONG_MAX)
             {
-                l->out(l->fs, "ARG ERROR: --run-time must be in range 0 --> %d.\n", ULLONG_MAX);
-                fsout(stderr, "ARG ERROR: --run-time must be in range 0 --> %d.\n", ULLONG_MAX);
+                l->out(l->fs, "ARG ERROR: --run-time must be in range 0 --> %d.\n", ULONG_MAX);
+                fsout(stderr, "ARG ERROR: --run-time must be in range 0 --> %d.\n", ULONG_MAX);
                 val = 1;
             }
         }
