@@ -29,7 +29,7 @@
 typedef struct log_data {
     FILE* fs;
     void (*out)(FILE* fs, char* fmt, ...);  /* Function pointer: fsout() */
-} log_t;
+} log;
 
 
 typedef struct {
@@ -46,9 +46,9 @@ typedef struct {
  * It is made with the intention of having a dedicated filestream for logging
  * program information.
  */
-log_t* log_init(char* fname);
+log* log_init(char* fname);
 
-void log_term(log_t* m);
+void log_term(log* m);
 
 /**
  * This function opens a file that has a name that matches fname. It opens the
