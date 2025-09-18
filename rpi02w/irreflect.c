@@ -56,7 +56,6 @@ int main(int argc, char** argv)
     inf_time = 15;
     val = 0;
     run = true;
-    inf = false;
     
     /* Printing welcome message. */
     fsout(stdout, "Program started. Will run for %d hours\n", run_time);
@@ -85,7 +84,7 @@ int main(int argc, char** argv)
         else if (!strcmp(argv[i], "--run-time"))
         {
             run_time = atoi(argv[i+1]);
-            if (inf_time > ULLONG_MAX)
+            if (run_time > ULLONG_MAX)
             {
                 l->out(l->fs, "ARG ERROR: --run-time must be in range 0 --> %d.\n", ULLONG_MAX);
                 fsout(stderr, "ARG ERROR: --run-time must be in range 0 --> %d.\n", ULLONG_MAX);
@@ -157,39 +156,36 @@ int main(int argc, char** argv)
         /* Checking if it's time to run a frame. */
         if (timer_sec_elapsed(*frm_timer, frm_time, l))
         {
-            if ((val = gpioRead(INF_SENSE)) == 0)
+            if (timer_sec_elapsed(*inf_timer, inf_time, l) && (val = gpioRead(INF_SENSE)) == 0)
             {
-                print(stdout, strfmt(buf, "Motion detected\n"));
-                gpioWrite(IR_LIGHT, 1);
-                rec = true;
-                frms_rec = 0;
+                l->out(l->fs, "Motion detected...\n");
+                fsout(stdout, "Motion detected...\n");
+                gpioWrite(INF_LIGHT, 1);
+                timer_sec_reinit(inf_timer, l);
             }
-            else if (rec && gpio_val == 1 && frms_rec >= rec_frms)
+            else if (val == 1)
             {
-                gpioWrite(IR_LIGHT, 0);
-                rec = false;
+                gpioWrite(INF_LIGHT, 0);
             }
-            else if (rec && frms_rec < rec_frms)
+            else if (val == PI_BAD_GPIO)
             {
-                frms_rec++;
-            }
-            else if (gpio_val == PI_BAD_GPIO)
-            {
-                print(stdout, strfmt(buf, "Error reading gpio: PI_BAD_GPIO\n"));
+                l->out(l->fs, "Error reading gpio: PI_BAD_GPIO\n");
+                fsout(stdout, "Error reading gpio: PI_BAD_GPIO\n");
                 exit(EXIT_FAILURE);
             }
-            
-            /* Recording this frame. */
-            frm_cnt++;
 
             /* Checking if we should end the program. */
-            if (frm_cnt >= FPS * 60 * 60 * run_time)
+            if (timer_sec_elapsed(*run_timer, run_time, l))
                 run = false;
-
-            /* Restarting the framerate timer. */
-            timer_nano_reinit(frm_timer); 
+            else
+                /* Restarting the framerate timer. */
+                timer_sec_reinit(frm_timer, l); 
         }
     } 
+
+    timer_sec_term(frm_timer);
+    timer_sec_term(run_timer);
+    timer_sec_term(inf_timer);
 
     gpioTerminate();
 
