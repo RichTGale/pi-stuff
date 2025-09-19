@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "utils.h"
-#include "timer_sec.h"
+#include "../../mycutils/mycutils.h"
+#include "../../clocks/timer_sec/timer_sec.h"
 
 int main()
 {
