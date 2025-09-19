@@ -5,7 +5,7 @@
  * The timer_sec type is a timer that has second precision.
  * 
  * Author(s): Richard Gale
- * Version: 1.0
+ * Version: 1.1
  */
 
 #include "timer_sec.h"
@@ -134,5 +134,6 @@ bool timer_sec_elapsed(timer_sec ts, long long wait_time, log* l)
  */
 void timer_sec_term(timer_sec* ts)
 {
+    /* Deallocate memory. */
     free(ts);
 }

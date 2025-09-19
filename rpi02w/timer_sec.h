@@ -6,7 +6,7 @@
  * The timer_sec type is a timer that has second precision.
  * 
  * Author(s): Richard Gale
- * Version: 1.0
+ * Version: 1.1
  */
 
 #ifndef TIMER_SEC_H
