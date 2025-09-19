@@ -1,16 +1,16 @@
 /**
  * timer_nano.h
  * 
- * This file contains function declarations/prototypes, and type declarations 
- * and data-structure definitions  for the timer_nano data type.
+ * This file contains function and type declarations for the timer_nano
+ * data type.
  * The timer_nano type is a timer that has nanosecond precision.
  * 
  * Author(s): Richard Gale
- * Version: 1.0
+ * Version: 1.1
  */
 
-#ifndef TIMER_NANO_H
-#define TIMER_NANO_H
+#ifndef TIMER_SEC_H
+#define TIMER_SEC_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,10 +20,7 @@
 #include <time.h>
 #include <errno.h>
 
-/**
- * There is this many nanoseconds in a second.
- */
-#define NANOS_PER_SEC 1000000000
+#include "utils.h"
 
 /**
  * The timer data structure.
@@ -38,19 +35,18 @@ typedef struct timer_nano_data
 /**
  * This function returns a new instance of a timer_nano.
  */
-timer_nano* timer_nano_init();
+timer_nano* timer_nano_init(log* l);
 
 /**
- * This function resets a timer_nano.
+ * This function resetn a timer_nano.
  */
-void timer_nano_reinit(timer_nano* tn);
+void timer_nano_reinit(timer_nano* tn, log* l);
 
 /**
- * This function will return HAS_ELAPSED upon the timer_nano passed to it
- * having been timing for longer than the wait_time parameter passed to it,
- * otherwise it will return NOT_ELAPSED;
+ * This function will return true upon the timer_nano passed to it
+ * has elapsed its waiting time parameter, otherwise it will return false.
  */
-bool timer_nano_alarm(timer_nano tn, long long wait_time);
+bool timer_nano_elapsed(timer_nano tn, long long wait_time, log* l);
 
 /**
  * This function destroys/deallocates memory from a timer_nano.

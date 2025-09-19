@@ -5,7 +5,7 @@
  * The timer_nano type is a timer that has nanosecond precision.
  * 
  * Author(s): Richard Gale
- * Version: 1.0
+ * Version: 1.1
  */
 
 #include "timer_nano.h"
@@ -13,24 +13,21 @@
 /**
  * This function returns a new instance of a timer.
  */
-timer_nano* timer_nano_init()
+timer_nano* timer_nano_init(log* l)
 {
-    char* output;   /* Output to filestream(s). */
-
     /* Allocating memory to a new timer. */
-    timer_nano* tn = (timer_nano*) malloc(sizeof(timer_nano));
+    timer_nano* tn = (timer_nano*) malloc(sizeof(struct timer_nano_data));
 
     /* Start the timer. */
     if ((clock_gettime(CLOCK_REALTIME, &(tn->initial)) == -1))
     {
         /* An error occured. Printing the error. */
-	    fsout(stderr, strfmt(output,
-	                        "ERROR: in function timer_nano_init(): %s\n",
-                            strerror(errno))
-                );
-
-        /* Exiting the program. */
-        exit(EXIT_FAILURE);
+	    fsout(
+                stderr,
+	            "ERROR: in function timer_nano_init(): %s\n", strerror(errno));
+	    l->out(
+                l->fs,
+	            "ERROR: in function timer_nano_init(): %s\n", strerror(errno));
     }
 
     /* Returning the timer. */
@@ -38,60 +35,53 @@ timer_nano* timer_nano_init()
 }
 
 /**
- * This function resets a timer_nano.
+ * This function resetn a timer_nano.
  */
-void timer_nano_reinit(timer_nano* tn)
+void timer_nano_reinit(timer_nano* tn, log* l)
 {
-    char* output;   /* Output to filestream(s). */
-
-    /* Resetting the timer. */
+    /* Start the timer. */
     if ((clock_gettime(CLOCK_REALTIME, &(tn->initial)) == -1))
     {
         /* An error occured. Printing the error. */
-	    print(stderr, strfmt(output,
-                    "ERROR: in function timer_nano_reinit(): %s\n",
-                    strerror(errno))
-                );
-
-        /* Exiting the program. */
-        exit(EXIT_FAILURE);
+	    fsout(
+                stderr,
+	            "ERROR: in function timer_nano_reinit(): %s\n", strerror(errno));
+	    l->out(
+                l->fs,
+	            "ERROR: in function timer_nano_reinit(): %s\n", strerror(errno));
     }
 }
 
 /**
  * This function will return true upon the timer_nano passed to it
- * having elapsed the wait_time parameter passed to it, otherwise it will
- * return false;
+ * has elapsed its waiting time parameter, otherwise it will return false.
  */
-bool timer_nano_elapsed(timer_nano tn, long long wait_time)
+bool timer_nano_elapsed(timer_nano tn, long long wait_time, log* l)
 {
-    char* output;   /* Output to filestream(s). */
-
-    /* Storing the current time. */
+    /* Start the timer. */
     if ((clock_gettime(CLOCK_REALTIME, &(&tn)->current) == -1))
     {
-        /* An error occured. Printing the error. */
-	    print(stderr, strfmt(output,
-	                        "ERROR: in function start_timer(): %s\n",
-	                        strerror(errno))
-                );
-
-        /* Exiting the program. */
-        exit(EXIT_FAILURE);
+        /* An error occured. Print the error. */
+	    fsout(
+                stderr,
+	            "ERROR: in function timer_nano_elapsed(): %s\n", strerror(errno));
+	    l->out(
+                l->fs,
+	            "ERROR: in function timer_nano_elapsed(): %s\n", strerror(errno));
     }
 
-    /* Calculating the amount of elapsed time and storing it. */
+    /* Calculate the amount of elapsed time and store it. */
     tn.elapsed.tv_sec  = tn.current.tv_sec  - tn.initial.tv_sec;
     tn.elapsed.tv_nsec = tn.current.tv_nsec - tn.initial.tv_nsec;
     
-    /* Determining whether the timer has ended (the alarm should sound). */
+    /* Determine whether the timer has elapsed. */
     if ((tn.elapsed.tv_sec * NANOS_PER_SEC) + tn.elapsed.tv_nsec > wait_time)
     {
-        /* Returning that the timer has ended (the alarm has gone off). */
+        /* Returning that the timer elapsed. */
         return true;
     }
-
-    /* Returning that the timer has yet to end (the alarm hasn't gone off). */ 
+    
+    /* Return that the timer hass not yet elapsed. */
     return false;
 }
 
@@ -100,5 +90,6 @@ bool timer_nano_elapsed(timer_nano tn, long long wait_time)
  */
 void timer_nano_term(timer_nano* tn)
 {
+    /* Deallocate memory. */
     free(tn);
 }

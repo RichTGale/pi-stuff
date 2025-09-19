@@ -1,5 +1,5 @@
 #!/bin/bash
 
-printf "g++ -Wall -pthread -o ltbl ltbl.c -lpigpio -lrt\n"
+printf "gcc -Wall -pthread -o ltbl utils.h timer_sec.h utils.c timer_sec.c ltbl.c -lpigpio -lrt\n"
 
-gcc -Wall -pthread -o ltbl ltbl.c -lpigpio -lrt
+gcc -Wall -pthread -o ltbl utils.h timer_sec.h utils.c timer_sec.c ltbl.c -lpigpio -lrt
