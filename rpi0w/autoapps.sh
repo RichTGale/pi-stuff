@@ -11,12 +11,9 @@ sleep 5
 
 lxterminal -e "sudo ${HOME}/Programs/reconnect.sh"
 sleep 5
-lxterminal -e sudo ~/Programs/sensor -t 24 -u richard -l "$HOME/Programming/pir-cam/sensor/temp" -r "192.168.0.4:/home/<username>/Programming/pir-cam"
+
+lxterminal -e sudo ~/Programs/sensor -t 24 -u richard -l "" -r ""
 sleep 5
-#lxterminal -e "sudo ${HOME}/Programs/store-files.sh"
-#sleep 5
-#lxterminal -e "sudo ${HOME}/Programs/macdump.sh"
-#sleep 2
 
 ip a
 sleep 2
