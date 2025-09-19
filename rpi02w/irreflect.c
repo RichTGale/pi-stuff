@@ -6,7 +6,7 @@
 #include <limits.h>
 #include <pigpio.h>
 
-#include "../../mycutils/mycutils.h"
+#include "../mycutils/mycutils.h"
 #include "../../clocks/timer_nano/timer_nano.h"
 #include "../../clocks/timer_sec/timer_sec.h"
 
