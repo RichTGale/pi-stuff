@@ -5,8 +5,6 @@ device_path=${PWD}
 
 printf "\nWelcome to your rpi setup wizard! "
 sleep 2
-printf "During installation the rpi will restart a few times.\n"
-sleep 5
 printf "Please answer the fiollowing questions:\n"
 sleep 2
 

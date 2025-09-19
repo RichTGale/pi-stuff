@@ -1,6 +1,6 @@
 #!/bin/bash
 
-repo_name="rpisec/rpi5"
+device_path=${PWD}
 
 printf "\nCreating ${HOME}/Programming and ${HOME}/Programs directories to install stuff in later...\n"
 if [ ! -d ${HOME}/Programming ]; then
@@ -11,68 +11,78 @@ if [ ! -d ${HOME}/Programs ]; then
     mkdir ${HOME}/Programs
 fi
 
+printf "\nWelcome to your rpi setup wizard! "
+sleep 2
+printf "Please answer the fiollowing questions:\n"
+sleep 2
+
+printf "\nWould you like to install vim? <Y/n>: "
+read install_vim
+printf "\n"
+
+printf "Would you like to install zsh? <Y/n>: "
+read install_zsh
+printf "\n"
+
+printf "\nWould you like to install the RTL8821AU TP-Link Archer T2u Plus wifi driver? (Y/n): "
+read install_wifi
+printf "\n"
+
+printf "\nWould you like to install pigpio (https://github.com/joan2937/pigpio)? It is a C library for programming the computer's GPIO pins. (Y/n): "
+read install_pigpio
+printf "\n"
+
+printf "\nWould you like to install SDL2? SDL2 is a C library for programming graphics and other media (Y/n): "
+read install_sdl2
+printf "\n"
+
+printf "\nWould you like to install Steam? (Y/n): "
+read install_steam
+printf "\n"
+
+printf "\nWould you like to install RetroPie? (Y/n): "
+read install_retropi
+printf "\n"
+
+printf "Would you like to modify the amount of swapfile space? <Y/n>: "
+read modify_swap
+printf "\n"
+
 printf "\nDoing a full system update and upgrade...\n"
 sudo apt update
 sudo apt full-upgrade -y
 
 printf "\nInstalling some utilities and dependencies...\n"
-sudo apt install vim git zsh dkms build-essential cmake make curl unzip macchanger aircrack-ng libelf-dev linux-headers-$(uname -r) -y
+sudo apt install git dkms build-essential cmake clangd make curl unzip macchanger aircrack-ng libelf-dev linux-headers-$(uname -r) -y
 
-printf "\nWould you like to configure vim? (Y/n):"
-read install_vim
-printf "\n"
 if [ "${install_vim}" != "n" ]; then
-	printf "\nConfiguring vim...\n"
-	cd ${HOME}/Programming
+	printf "\nInstalling vim...\n"
+    sudo apt install vim -y
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-	cp ${HOME}/Programming/"${repo_name}"/.vimrc ${HOME}
+	cp -t ${HOME} ${device_path}/.vimrc
 	vim -c PlugInstall
 fi
 
-printf "\nWould you like to configure zsh? (Y/n):"
-read install_zsh
-printf "\n"
 if [ "${install_zsh}" != "n" ]; then
-	printf "\nConfiguring zsh...\n"
+	printf "\nInstalling zsh...\n"
+    sudo apt install zsh -y
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 	git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-	cd ${HOME}/Programming
-	cp ${HOME}/Programming/"${repo_name}"/.zshrc ${HOME}
+	cp -t ${HOME} ${device_path}/.zshrc
 	printf "\nSwitching default shell to zsh...\n"
 	chsh -s $(which zsh)
 fi
 
-printf "\nWould you like to install the RTL8821AU TP-Link Archer T2u Plus wifi driver? (Y/n): "
-read install_wifi
-printf "\n"
 if [ "${install_wifi}" != "n" ]; then
-    printf "\nInstalling TP-Link Archer T2U Plus [RTL8821AU] driver...\n"
-    cd ${HOME}/Programs
-    git clone https://github.com/aircrack-ng/rtl8812au.git
-    cd rtl8812au
-    sudo make dkms_install
-
-    printf "\nCopying autostart files...\n"
-    sudo cp ${HOME}/Programming/"${repo_name}"/my-autostart-apps.desktop /etc/xdg/autostart
-    cp ${HOME}/Programming/"${repo_name}"/my-autostart-apps.sh ${HOME}/Programs
+	sudo apt install raspberrypi-kernel-headers build-essential git -y
+	cd ${HOME}/Programs
+	git clone https://github.com/lwfinger/rtw88
+	cd rtw88
+	sudo dkms install $PWD
+	sudo make install_fw
 fi
 
-printf "\nWould you like to change the amount of space allocated to the swapfile? (Y/n): "
-read change_swap
-printf "\n"
-if [ "${change_swap}" != "n" ]; then
-    printf "\nOpening the swap config file for editing...\n"
-    sleep 2
-    sudo dphys-swapfile swapoff
-    sudo vim /etc/dphys-swapfile
-    sudo dphys-swapfile setup
-    sudo dphys-swapfile swapon
-fi
-
-printf "\nWould you like to install Steam? (Y/n): "
-read install_steam
-printf "\n"
 if [ "${install_steam}" != "n" ]; then
     printf "\nBuilding and installing Steam dependencies...\n"
     sudo dpkg --add-architecture armhf
@@ -98,13 +108,18 @@ if [ "${install_steam}" != "n" ]; then
     cd ${HOME}/Programs/box86
     ./install_steam.sh
 
-    printf "\nSteam is now hopefully installed. The computer will reboot at the end of the script. After it reboots, open a terminal and type \"steam\" then press ENTER to launch steam.\nPress ENTER to continue.\n"
-    read pressEnter
+    printf "\nSteam is now hopefully installed. The computer will reboot at the end of the script. After it reboots, open a terminal and type \"steam\" then press ENTER to launch steam.\n"
 fi
 
-printf "\nWould you like to install SDL2? SDL2 is a C library for programming graphics and other media (Y/n): "
-read install_sdl2
-printf "\n"
+if [ "${change_swap}" != "n" ]; then
+    printf "\nOpening the swap config file for editing...\n"
+    sudo dphys-swapfile swapoff
+    sudo vim /etc/dphys-swapfile
+    sudo dphys-swapfile setup
+    sudo dphys-swapfile swapon
+fi
+
+
 if [ "${install_sdl2}" != "n" ]; then
     printf "\nInstalling SDL2...\n"
     sudo apt install jq pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev libaudio-dev libjack-dev libsndio-dev libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev fcitx-libs-dev -y
@@ -132,9 +147,6 @@ if [ "${install_sdl2}" != "n" ]; then
     sudo make install
 fi
 
-printf "\nWould you like to install RetroPie? (Y/n): "
-read install_retropi
-printf "\n"
 if [ "${install_retropi}" != "n" ]; then
     printf "\nInstalling RetroPi...\n"
     sudo apt install git lsb-release -y
@@ -145,9 +157,6 @@ if [ "${install_retropi}" != "n" ]; then
     sudo ./retropie_setup.sh
 fi
 
-printf "\nWould you like to install pigpio (https://github.com/joan2937/pigpio)? It is a C library for programming the computer's GPIO pins. (Y/n): "
-read install_pigpio
-printf "\n"
 if [ "${install_pigpio}" != "n" ]; then
     printf "\nInstalling pigpio...\n"
     cd ${HOME}/Programs
@@ -169,7 +178,7 @@ sudo apt autoremove -y
 printf "\nThe script has finished. Would you like to reboot now? <Y/n>: "
 read reboot_now
 printf "\n"
-if [ ${reboot_now} == "n" ];
+if [ "${reboot_now}" != "n" ];
 then
     printf "Rebooting... Have a nice day :)\n"
     sudo reboot
@@ -177,4 +186,4 @@ fi
 
 printf "Have a nice day :)\n"
 
-sudo reboot
+sleep 5

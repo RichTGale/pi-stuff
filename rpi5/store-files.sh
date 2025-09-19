@@ -1,7 +1,10 @@
 #!/bin/bash
 
-src="/home/richard/Videos"
-tar="/media/richard/EVO_500GB/coopcam"
+src="/home/richard/Videos"                  # source directory
+tar1="/media/richard/EVO_500GB/coopcam"      # target directory
+tar2="/media/richard/EVO_500GB1/coopcam"      # target directory
+
+wait_time=1800
 
 printf "Storing any received videos...\n"
 
@@ -14,17 +17,22 @@ do
         vids=(${src}/*)   # Get the array of videos
         vid=0
         for vid in "${!vids[@]}"; do
-            if [ -d ${tar} ];
+            if [ -d ${tar1} ];
             then
                 vlc --play-and-exit ${vids[vid]}
-                printf "Sending video to ${tar}...\n"
-                rsync --progress ${vids[vid]} ${tar}
+                printf "Sending video to ${tar1}...\n"
+                sudo rsync --progress ${vids[vid]} ${tar1}
                 sudo rm -f rm ${vids[vid]}
-                sleep 1
-            else
-                printf "${tar} isn't accessible :(\n"
+            elif [ -d ${tar2} ];
+            then
+                vlc --play-and-exit ${vids[vid]}
+                printf "Sending video to ${tar2}...\n"
+                sudo rsync --progress ${vids[vid]} ${tar2}
+                sudo rm -f rm ${vids[vid]}
+            else 
+                printf "${tar1} and ${tar2} arn't accessible :(\n"
             fi
         done
     fi
-    sleep 1800  # Wait 30 minutes
+    sleep ${wait_time} 
 done

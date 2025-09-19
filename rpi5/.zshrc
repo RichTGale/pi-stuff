@@ -111,3 +111,14 @@ export PATH=$PATH:/home/richard/bin
 export EDITOR="/usr/bin/vim"
 
 alias ls="ls -l --color=auto"
+
+#alias rpi0w0_loc="ssh richard@10.8.0.7"
+#alias rpi02w0_loc="ssh richard@10.8.0.5"
+alias rpi02w1_loc="ssh richard@192.168.0.161"
+alias rpi50_loc="ssh richard@192.168.0.60"
+
+alias server_vpn="ssh richard@10.8.0.1"
+alias rpi02w1_vpn="ssh richard@10.8.0.3"
+alias rpi50_vpn="ssh richard@10.8.0.4"
+alias rpi02w0_vpn="ssh richard@10.8.0.5"
+alias rpi0w0_vpn="ssh richard@10.8.0.7"

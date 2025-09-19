@@ -71,11 +71,13 @@ let g:tokyonight_enable_italic = 1
 colorscheme tokyonight
 
 " Mapping keys to comment and uncomment code (in C/C++/javascript).
-"map <c-_> :s/^/\/\/<CR>
-"map <c-\> :s/^\/\//<CR>
+map <c-_> :s/^/\/\/<CR>
+map <c-\> :s/^\/\//<CR>
 
-map <c-_> :s/^/#<CR>
-map <c-\> :s/^\#<CR>
+"map <c-_> :s/^/#<CR>
+"map <c-\> :s/^\#<CR>
+
+" Mapping keys to comment and uncomment code (bash).
 
 " Mapping keys for indent.
 map <Tab> :s/^/<Tab><CR>

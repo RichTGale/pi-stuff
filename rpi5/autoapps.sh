@@ -1,6 +1,6 @@
 #!/bin/bash
 
-nmcli device disconnect wlan0
+nmcli device connect wlan0
 sleep 5
 nmcli device connect wlan1
 sleep 5
@@ -9,16 +9,12 @@ printf "Restarting VPN service. Network config will display once the VPN has res
 sudo systemctl restart openvpn-client@client.service
 sleep 5
 
-sudo apt update
-sudo apt upgrade -y
-sudo apt autoremove -y
-
 lxterminal -e "sudo ${HOME}/Programs/reconnect.sh"
 sleep 5
-lxterminal -e "sudo ${HOME}/Programs/store-files.sh"
+lxterminal -e "${HOME}/Programs/store-files.sh"
 sleep 5
 #lxterminal -e "sudo ${HOME}/Programs/macdump.sh"
-#sleep 2
+sleep 2
 
 ip a
 sleep 2
