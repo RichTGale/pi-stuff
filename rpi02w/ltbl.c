@@ -39,6 +39,7 @@ int main()
     /* Turn on the infrared light. */
     gpioWrite(INF_LIGHT, 1);
 
+    /* Wait a bit. */
     while (!timer_sec_elapsed(*wait_timer, WAIT_TIME, l)) {}
 
     /* Turn off the infrared light. */
