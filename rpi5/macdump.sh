@@ -3,7 +3,7 @@
 install_aircrack="n"
 using_waln1="n"
 
-printf "Would you like to install aircrack-ng? <y/N>: "
+printf "Would you like to install aircrack-ng? This will update your system and install aircrack-ng and macchanger. <y/N>: "
 read install_aircrack
 printf "\n"
 
