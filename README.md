@@ -13,7 +13,7 @@ A lot is my own stuff but maybe someone will find something useful.<br /><br />
   </li>
   <li>
 
-  You can try this for raspberry pi 5 but I wouldn't install retropi with some of the other stuff because retropi kind of takes over the pi.<br />
+  You can try this for raspberry pi 5.<br />
   The script will ask what you want to install... :<br />
 
   ```
