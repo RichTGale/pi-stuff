@@ -36,7 +36,7 @@ printf "\nWould you like to install SDL2? SDL2 is a C library for programming gr
 read install_sdl2
 printf "\n"
 
-printf "\nWould you like to install Steam? After instslling, reboot the syste. Then, open a terminal and type \"steam\" and press enter. (Y/n): "
+printf "\nWould you like to install Steam? After installing, reboot the system. Then, open a terminal and type \"steam\" and press enter. (Y/n): "
 read install_steam
 printf "\n"
 
