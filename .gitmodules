@@ -4,3 +4,6 @@
 [submodule "mycutils"]
 	path = mycutils
 	url = https://github.com/RichTGale/mycutils.git
+[submodule "wait-exec"]
+	path = wait-exec
+	url = https://github.com/RichTGale/wait-exec.git
