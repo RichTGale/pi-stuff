@@ -13,7 +13,7 @@ printf "\n"
 
 if [ "${install_aircrack}" != "n" ];
 then
-  sudo apt update ; sudo apt upgrade ; sudo apt install aircrack-ng
+  sudo apt update ; sudo apt upgrade ; sudo apt install aircrack-ng macchanger
 fi
 
 sudo airmon-ng check kill
