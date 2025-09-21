@@ -1,4 +1,4 @@
 # pi-stuff
 ```
-git clone --recurse-submodules https://github.com/RichTGale/pi-stuff.git
+git clone https://github.com/RichTGale/pi-stuff.git --recursive
 ```
