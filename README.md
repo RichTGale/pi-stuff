@@ -14,7 +14,7 @@ The rpi0* stuff uses a pigpio library that you need to be careful maybe what you
   </li>
   <li>
 
-  You can try this for raspberry pi 5 but I wouldn't install retropi with some of the other stuff.<br />
+  You can try this for raspberry pi 5 but I wouldn't install retropi with some of the other stuff because retropi kind of takes over the pi.<br />
   The script will ask what you want to install... :<br />
 
   ```
