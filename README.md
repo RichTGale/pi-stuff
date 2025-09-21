@@ -13,8 +13,7 @@ A lot is my own stuff but maybe someone will find something useful.<br /><br />
   </li>
   <li>
 
-  You can try this for raspberry pi 5.<br />
-  The script will ask what you want to install... :<br />
+  You can try this for raspberry pi 5. The script will ask what you want to install... :<br />
 
   ```
   cd rpi5 ; chmod +x rpi5-setup.sh ; ./setup-rpi5.sh
