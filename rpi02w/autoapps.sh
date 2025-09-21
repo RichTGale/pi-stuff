@@ -9,7 +9,7 @@
 #sudo systemctl restart openvpn-client@client.service
 #sleep 5
 
-#lxterminal -e "s${HOME}/Programs/reconnect.sh"
+#lxterminal -e "${HOME}/Programs/reconnect.sh"
 #sleep 5
 
 #lxterminal -e "${HOME}/Programs/send-files.sh"
