@@ -1,7 +1,7 @@
 # pi-stuff
 
 A lot is my own stuff but maybe someone will find something useful.<br /><br />
-A word of caution:<br />
+A SMALL WORD OF CAUTION:<br />
 The rpi0* stuff uses a pigpio library that you need to be careful maybe what you have plugged into those gpio pins. Just a little warning. But that's just the rpio0w and rpi02w folders.<br /><br />
 
 <ul>
