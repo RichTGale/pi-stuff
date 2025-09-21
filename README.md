@@ -17,7 +17,7 @@ A lot is my own stuff but maybe someone will find something useful.<br /><br />
   The script will ask what you want to install... :<br />
 
   ```
-  cd rpi5 ; chmod +x rpi5-setup.sh ; ./rpi5-setup.sh
+  cd rpi5 ; chmod +x rpi5-setup.sh ; ./setup-rpi5.sh
   ```
 
   </li>
