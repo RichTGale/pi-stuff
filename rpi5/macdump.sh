@@ -18,7 +18,7 @@ fi
 
 sudo airmon-ng check kill
 
-if [ "${using wlan1}" != "n" ];
+if [ "${using_wlan1}" != "n" ];
 then
   sudo ip link set wlan0 down
   sleep 2
