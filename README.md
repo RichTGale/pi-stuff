@@ -1,19 +1,23 @@
 # pi-stuff
+
+A lot is my own stuff but maybe someone will find something useful.<br /><br />
+
 <ul>
-<li>Downloading the repo:
+<li>
+  Downloading the repo:<br />
   
-```
-git clone https://github.com/RichTGale/pi-stuff.git --recursive
-```
+  ```
+  git clone https://github.com/RichTGale/pi-stuff.git --recursive
+  ```
 
-</li>
+  </li>
   <li>
-A lot is my own stuff. <br /><br />
-You can try this for raspberry pi 5 but I wouldn't install retropi with some of the other stuff. The script asks what you want to install...:
 
-```
-cd rpi5 ; chmod +x rpi5-setup.sh ; ./rpi5-setup.sh
-```
+  You can try this for raspberry pi 5 but I wouldn't install retropi with some of the other stuff. The script asks what you want to install...:<br />
 
-</li>
+  ```
+  cd rpi5 ; chmod +x rpi5-setup.sh ; ./rpi5-setup.sh
+  ```
+
+  </li>
 </ul>
