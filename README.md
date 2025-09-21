@@ -2,7 +2,7 @@
 
 A lot is my own stuff but maybe someone will find something useful.<br /><br />
 A SMALL WORD OF CAUTION:<br />
-The rpi0* stuff uses a pigpio library that you need to be careful maybe what you have plugged into those gpio pins. Just a little warning. But that's just the rpio0w and rpi02w folders.<br /><br />
+The rpi0* stuff uses a pigpio library that you need to be careful maybe what you have plugged into gpio pins that are used by programs that are exuted in stripts on desktop gui start up. Just a little warning. But that's just the rpio0w and rpi02w folders.<br /><br />
 
 <ul>
 <li>
