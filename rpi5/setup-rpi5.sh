@@ -178,7 +178,7 @@ sudo apt autoremove -y
 printf "\nThe script has finished. Would you like to reboot now? <y/N>: "
 read reboot_now
 printf "\n"
-if [ "${reboot_now}" != "y" ];
+if [ "${reboot_now}" == "y" ];
 then
     printf "Rebooting... Have a nice day :)\n"
     sudo reboot
