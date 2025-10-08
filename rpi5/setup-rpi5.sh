@@ -111,7 +111,7 @@ if [ "${install_steam}" != "n" ]; then
     printf "\nSteam is now hopefully installed. The computer will reboot at the end of the script. After it reboots, open a terminal and type \"steam\" then press ENTER to launch steam.\n"
 fi
 
-if [ "${change_swap}" != "n" ]; then
+if [ "${modify_swap}" != "n" ]; then
     printf "\nOpening the swap config file for editing...\n"
     sudo dphys-swapfile swapoff
     sudo vim /etc/dphys-swapfile
