@@ -1,6 +1,6 @@
 # pi-stuff
 
-A lot is my own stuff but maybe someone will find something useful.<br /><br />
+A lot is my own stuff but maybe someone will find something useful. It was for rapbian bookworm<br /><br />
 
 <ul>
 <li>
