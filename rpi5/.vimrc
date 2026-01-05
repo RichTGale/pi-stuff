@@ -12,7 +12,9 @@ call plug#begin('~/.vim/plugged')
 " Colour scheme
 "Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 "Plug 'morhetz/gruvbox'
-Plug 'ghifarit53/tokyonight-vim'
+"Plug 'ghifarit53/tokyonight-vim'
+
+Plug 'EdenEast/nightfox.nvim' " Vim-Plug
 
 Plug 'sheerun/vim-polyglot'
 
@@ -65,19 +67,21 @@ set nocompatible
 "colorscheme gruvbox
 
 " Colourscheme tokyonight
-set termguicolors
-let g:tokyonight_style = 'night' " available: night, storm
-let g:tokyonight_enable_italic = 1
-colorscheme tokyonight
+"set termguicolors
+"let g:tokyonight_style = 'night' " available: night, storm
+"let g:tokyonight_enable_italic = 1
+"colorscheme tokyonight
+
+colorscheme terafox
+
 
 " Mapping keys to comment and uncomment code (in C/C++/javascript).
 map <c-_> :s/^/\/\/<CR>
 map <c-\> :s/^\/\//<CR>
 
-"map <c-_> :s/^/#<CR>
-"map <c-\> :s/^\#<CR>
-
-" Mapping keys to comment and uncomment code (bash).
+" Mapping keys to comment and uncomment code (in bash).
+map <c-s> :s/^/#<CR>
+map <c-h> :s/^\#<CR>
 
 " Mapping keys for indent.
 map <Tab> :s/^/<Tab><CR>
