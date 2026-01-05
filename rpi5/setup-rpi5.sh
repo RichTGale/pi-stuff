@@ -57,7 +57,7 @@ sudo apt install git dkms build-essential cmake clangd make curl unzip macchange
 
 if [ "${install_vim}" != "n" ]; then
 	printf "\nInstalling vim...\n"
-    sudo apt install vim -y
+    sudo apt install vimv im-gui-common -y
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 	cp -t ${HOME} ${device_path}/.vimrc
 	vim -c PlugInstall
