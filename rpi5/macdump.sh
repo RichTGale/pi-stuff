@@ -11,14 +11,14 @@ printf "Are you using wlan1 (tp link ac600 wifi aerial)? <y/N>: "
 read using_wlan1
 printf "\n"
 
-if [ "${install_aircrack}" != "n" ];
+if [ "${install_aircrack}" == "y" ];
 then
   sudo apt update ; sudo apt upgrade ; sudo apt install aircrack-ng macchanger
 fi
 
 sudo airmon-ng check kill
 
-if [ "${using_wlan1}" != "n" ];
+if [ "${using_wlan1}" == "y" ];
 then
   sudo ip link set wlan0 down
   sleep 2
