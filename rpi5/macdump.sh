@@ -12,7 +12,7 @@ sleep 2
 sudo ip link set wlan1mon down
 sudo macchanger -r wlan1mon
 sudo ip link set wlan1mon up
-sudo airodump-ng --write ${HOME}/Documents/dump --output-format csv wlan1mon
+sudo airodump-ng --write ${HOME}/Documents/macdump --output-format csv wlan1mon
 
 sudo airmon-ng stop wlan1mon
 
