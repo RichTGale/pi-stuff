@@ -28,7 +28,7 @@ then
   sudo ip link set wlan1mon down
   sudo macchanger -r wlan1mon
   sudo ip link set wlan1mon up
-  sudo airodump-ng --write ${HOME}/Documents/dump --output-format csv wlan1
+  sudo airodump-ng --write ${HOME}/Documents/dump --output-format csv wlan1mon
 else
   printf "Monitor mode not supported on this wireless interface\n"
 fi
