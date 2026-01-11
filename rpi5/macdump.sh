@@ -1,16 +1,6 @@
 #!/bin/bash
 
-install_aircrack="n"
-using_waln1="n"
-
-printf "Would you like to install aircrack-ng? This will update your system and install aircrack-ng and macchanger. <y/N>: "
-read install_aircrack
-printf "\n"
-
-if [ "${install_aircrack}" == "y" ];
-then
-  sudo apt update ; sudo apt upgrade ; sudo apt install aircrack-ng macchanger
-fi
+sudo apt update ; sudo apt upgrade -y ; sudo apt install aircrack-ng macchanger -y
 
 sudo airmon-ng check kill
 
