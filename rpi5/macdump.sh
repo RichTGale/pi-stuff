@@ -25,17 +25,12 @@ then
   sudo ip link set wlan1 up
   sudo airmon-ng start wlan1
   sleep 2
-  sudo ip link set wlan1 down
-  sudo macchanger -r wlan1
-  sudo ip link set wlan1 up
+  sudo ip link set wlan1mon down
+  sudo macchanger -r wlan1mon
+  sudo ip link set wlan1mon up
   sudo airodump-ng --write ${HOME}/Documents/dump --output-format csv wlan1
 else
-  sudo airmon-ng start wlan0
-  sleep 2
-  sudo ip link set wlan0 down
-  sudo macchanger -r wlan0
-  sudo ip link set wlan0 up
-  sudo airodump-ng --write ${HOME}/Documents/dump --output-format csv wlan0
+  printf "Monitor mode not supported on this wireless interface\n"
 fi
 
 read pressEnter
